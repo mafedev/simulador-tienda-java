@@ -1,5 +1,11 @@
 package tienda;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class Venta {
 	private int id;
 	private int productoId;
@@ -59,8 +65,30 @@ public class Venta {
 		this.devuelto = devuelto;
 	}
 	
-	
-	public void mostrarInfo() {
-		
+	// Métodos	
+	public void mostrarVenta() {
+		try {
+			Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tienda", "root", "root");
+			Statement s = c.createStatement();
+			ResultSet rs = s.executeQuery("SELECT * FROM ventas");
+
+			while (rs.next()) {
+				System.out.println("ID: " + rs.getInt("id"));
+				System.out.println("Nombre: " + rs.getInt("producto_id"));
+				System.out.println("Categoria: " + rs.getInt("cantidad"));
+				System.out.println("Total: " + rs.getDouble("total"));
+				
+				boolean devuelto = rs.getBoolean("devuelto");
+				if(devuelto) {
+					System.out.println("Ha sido devuelto");
+				} 
+				
+				System.out.println();
+			}
+			System.out.println("____________________\n");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

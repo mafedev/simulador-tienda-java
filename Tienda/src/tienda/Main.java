@@ -16,42 +16,52 @@ public class Main {
 		// TODO Auto-generated method stub
 		char opc;
 		
-		// Bucle principal para el menú principal
-		do {
-			opc = menu();
+		try {
+			Connection c = DriverManager.getConnection(url, "root", "root");
+			Tienda t = new Tienda(c);
+			
+			// Bucle principal para el menú principal
+			do {
+				opc = menu();
 
-			switch (opc) {
-			case '1':
-				comprarProducto();
-				break;
-			case '2':
-				agregarProducto();
-				break;
-			case '3':
-				devolverProducto();
-				break;
-			case '4':
-				eliminarProducto();
-				break;
-			case '5':
-				logicaMenuSecundario();
-				break;
-			case '6':
-				mostrarVentas();
-				break;
-			case '7':
-				mostrarDevoluciones();
-				break;
-			case '8':
-				System.out.println("Saliendo...");
-				totalVentas();
-				break;
-			default:
-				System.out.println("Ingrese una opción correcta");
-			}
+				switch (opc) {
+				case '1':
+					t.venderProducto();
+					break;
+				case '2':
+					agregarProducto();
+					break;
+				case '3':
+					devolverProducto();
+					break;
+				case '4':
+					eliminarProducto();
+					break;
+				case '5':
+					logicaMenuSecundario();
+					break;
+				case '6':
+					mostrarVentas();
+					break;
+				case '7':
+					mostrarDevoluciones();
+					break;
+				case '8':
+					System.out.println("Saliendo...");
+					totalVentas();
+					break;
+				default:
+					System.out.println("Ingrese una opción correcta");
+				}
 
-		} while (opc != '8');
+			} while (opc != '8');
 
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	// ------------------------------------------- MENÚS -------------------------------------------
