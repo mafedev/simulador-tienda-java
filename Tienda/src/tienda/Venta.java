@@ -2,6 +2,7 @@ package tienda;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,7 +14,7 @@ public class Venta {
 	private double total;
 	private boolean devuelto;
 	
-	// Constructores
+	// --------------------- Constructores ---------------------
 	public Venta() {}
 
 	public Venta(int id, int productoId, int cantidad, double total, boolean devuelto) {
@@ -24,7 +25,7 @@ public class Venta {
 		this.devuelto = devuelto;
 	}
 
-	// Getters y Setters
+	// --------------------- Getters y Setters ---------------------
 	public int getId() {
 		return id;
 	}
@@ -57,7 +58,7 @@ public class Venta {
 		this.total = total;
 	}
 
-	public boolean isDevuelto() {
+	public boolean getDevuelto() {
 		return devuelto;
 	}
 
@@ -65,10 +66,32 @@ public class Venta {
 		this.devuelto = devuelto;
 	}
 	
-	// Métodos	
-	public void mostrarVenta() {
+	// --------------------- Métodos ---------------------	
+	public void registrarVenta(Connection c, int id, int cantidad, double total) {
 		try {
-			Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tienda", "root", "root");
+			String venta = "INSERT INTO ventas (producto_id, cantidad, total) VALUES (?,?,?)";
+			PreparedStatement psVenta = c.prepareStatement(venta);
+			psVenta.setInt(1, id);
+			psVenta.setInt(2, cantidad);
+			psVenta.setDouble(3, total);
+
+			int filasAfectadas = psVenta.executeUpdate();
+			if (filasAfectadas > 0) {
+				System.out.println("Compra registrada correctamente");
+			} else {
+				System.out.println("Error al registrar la compra");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void descontarDevolucion() {
+		
+	}
+	
+	public static void mostrarVentas(Connection c) {
+		try {
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery("SELECT * FROM ventas");
 
@@ -77,12 +100,12 @@ public class Venta {
 				System.out.println("Nombre: " + rs.getInt("producto_id"));
 				System.out.println("Categoria: " + rs.getInt("cantidad"));
 				System.out.println("Total: " + rs.getDouble("total"));
-				
+
 				boolean devuelto = rs.getBoolean("devuelto");
-				if(devuelto) {
+				if (devuelto) {
 					System.out.println("Ha sido devuelto");
-				} 
-				
+				}
+
 				System.out.println();
 			}
 			System.out.println("____________________\n");
@@ -91,4 +114,39 @@ public class Venta {
 			e.printStackTrace();
 		}
 	}
+	
+	public void mostrarTicket(Connection c, Producto p, double total, int cantidad) {
+		// Se muestra la descripción de la compra
+		// Falta gregar el numero de la compra en la parte derecha de arriba
+		int id = 0;
+		try {
+			String obtenerId = "SELECT MAX(id) FROM ventas";
+			PreparedStatement ps = c.prepareStatement(obtenerId);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				id = rs.getInt(1);
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("\n"
+				+ "      /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\ \r\n"
+				+ "     │                             Id compra: " + id + "         |\r\n"
+				+ "     │                                                  |\r\n"
+				+ "     │       @                                          |\r\n"
+				+ "     │     @@@@@      Producto: " + p.getNombre() +"\r\n"
+				+ "     │    @  @        Precio c/u: " + p.getPrecio()+ " €\r\n"
+				+ "     │     @@@@       Cantidad: " + cantidad + "\r\n"
+				+ "     │       @ @@                                       |\r\n"
+				+ "     │       @  @                                       |\r\n"
+				+ "     │    @@@@@@      Total: " + total + " €\r\n"
+				+ "     │       @                                          |\r\n"
+				+ "     │                                                  |\r\n"
+				+ "      \\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/ \r\n");
+		
+	}
+	
 }
