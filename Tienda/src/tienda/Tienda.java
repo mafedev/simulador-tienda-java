@@ -200,6 +200,7 @@ public class Tienda {
 	}
 
 	public void devolverProducto() {
+		// que compruebe que no esta roto o en mal estado
 		Scanner sc = new Scanner(System.in);
 
 		System.out.println("Ingrese el id de la compra, se encuentra en la parte superior del ticket");

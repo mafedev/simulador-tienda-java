@@ -15,7 +15,8 @@ public class Venta {
 	private boolean devuelto;
 	
 	// --------------------- Constructores ---------------------
-	public Venta() {}
+	public Venta() {
+	}
 
 	public Venta(int id, int productoId, int cantidad, double total, boolean devuelto) {
 		this.id = id;
@@ -77,7 +78,7 @@ public class Venta {
 			psVenta.setDouble(3, total);
 
 			int filasAfectadas = psVenta.executeUpdate();
-			if (filasAfectadas > 0) {
+			if (filasAfectadas > 0) { // Verifica si la venta se insertó correctamente en la tabla
 				System.out.println("Compra registrada correctamente");
 			} else {
 				System.out.println("Error al registrar la compra");
@@ -87,9 +88,10 @@ public class Venta {
 		}
 	}
 	
+	// Descuenta el dinero en la tabla de ventas en caso de que haya una devolución
 	public void descontarDevolucion(Connection c, int ventaId) {
 		try {
-			String descontarDinero = "UPDATE ventas SET total = 0, devueLto = TRUE WHERE id = ?";
+			String descontarDinero = "UPDATE ventas SET total = 0, devuelto = TRUE WHERE id = ?"; // Pone el dinero en 0
 			PreparedStatement psDescontar = c.prepareStatement(descontarDinero);
 			psDescontar.setInt(1, ventaId);
 			psDescontar.executeUpdate();
@@ -98,6 +100,7 @@ public class Venta {
 		}
 	}
 	
+	// Este método muestra todas las ventas registradas
 	public static void mostrarVentas(Connection c) {
 		try {
 			Statement s = c.createStatement();
@@ -111,7 +114,7 @@ public class Venta {
 
 				boolean devuelto = rs.getBoolean("devuelto");
 				if (devuelto) {
-					System.out.println("Ha sido devuelto");
+					System.out.println("Ha sido devuelto"); // Si se ha hecho una devolución, muestra el mensaje
 				}
 
 				System.out.println();

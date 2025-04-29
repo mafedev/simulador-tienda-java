@@ -13,6 +13,7 @@ public class Producto {
 	private double precio;
 	private int cantidad;
 
+	// --------------------- Constructores ---------------------
 	public Producto() {
 	}
 
@@ -27,7 +28,7 @@ public class Producto {
 		this.cantidad = cantidad;
 	}
 
-	// Getters y Setters	
+	// --------------------- Getters y Setters ---------------------
 	public int getId() {
 		return id;
 	}
@@ -84,10 +85,11 @@ public class Producto {
 		this.cantidad = cantidad;
 	}
 
-	// Métodos
+	// --------------------- Métodos ---------------------
+	// Cuando hay una compra, actualiza el stock restando la cantidad de productos comprados
 	public void actualizarStockCompra(Connection c, int cantidad, int id) {
 		try {
-			String descontarCantidad = "UPDATE productos SET cantidad = cantidad - ? WHERE id = ?";
+			String descontarCantidad = "UPDATE productos SET cantidad = cantidad - ? WHERE id = ?"; // Resta la cantidad comprada a la cantidad de productos que hay
 			PreparedStatement psCantidad = c.prepareStatement(descontarCantidad);
 			psCantidad.setInt(1, cantidad);
 			psCantidad.setInt(2, id);
@@ -103,6 +105,7 @@ public class Producto {
 		}
 	}
 
+	// Cuando hay una devolución, actualiza el stock sumando los productos devueltos
 	public static void actualizarStockDevolucion(Connection c, int cantidad, int productoId) {
 		try {
 			String actualizarStock = "UPDATE productos SET cantidad = cantidad + ? WHERE id = ?";
