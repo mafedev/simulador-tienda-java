@@ -87,6 +87,7 @@ public class Main {
 			menu = menuSecundario();
 			switch (menu) {
 				case '1':
+					// Hacer que muestre lo de informacion detallada
 					t.mostrarProductos();
 					break;
 				case '2':

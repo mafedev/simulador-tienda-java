@@ -67,6 +67,7 @@ public class Venta {
 	}
 	
 	// --------------------- Métodos ---------------------	
+	// Método que se encarga de registrar la venta en la tabla ventas, y recibe como parámetros los valores a insertar
 	public void registrarVenta(Connection c, int id, int cantidad, double total) {
 		try {
 			String venta = "INSERT INTO ventas (producto_id, cantidad, total) VALUES (?,?,?)";
@@ -86,8 +87,15 @@ public class Venta {
 		}
 	}
 	
-	public void descontarDevolucion() {
-		
+	public void descontarDevolucion(Connection c, int ventaId) {
+		try {
+			String descontarDinero = "UPDATE ventas SET total = 0, devueLto = TRUE WHERE id = ?";
+			PreparedStatement psDescontar = c.prepareStatement(descontarDinero);
+			psDescontar.setInt(1, ventaId);
+			psDescontar.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void mostrarVentas(Connection c) {
@@ -116,8 +124,6 @@ public class Venta {
 	}
 	
 	public void mostrarTicket(Connection c, Producto p, double total, int cantidad) {
-		// Se muestra la descripción de la compra
-		// Falta gregar el numero de la compra en la parte derecha de arriba
 		int id = 0;
 		try {
 			String obtenerId = "SELECT MAX(id) FROM ventas";
@@ -125,16 +131,17 @@ public class Venta {
 			ResultSet rs = ps.executeQuery();
 			
 			if(rs.next()) {
-				id = rs.getInt(1);
+				id = rs.getInt(1); // Obtiene el id de la última venta para luego mostrarlo en el ticket
 			}
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 		
+		// Se muestra la descripción de la compra
 		System.out.println("\n"
 				+ "      /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\ \r\n"
-				+ "     │                             Id compra: " + id + "         |\r\n"
+				+ "     │                               Id compra: " + id + "       |\r\n"
 				+ "     │                                                  |\r\n"
 				+ "     │       @                                          |\r\n"
 				+ "     │     @@@@@      Producto: " + p.getNombre() +"\r\n"

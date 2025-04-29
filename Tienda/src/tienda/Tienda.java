@@ -96,12 +96,13 @@ public class Tienda {
 					// Se calcula el total de la compra
 					this.totalVenta = producto.getPrecio() * cantidad;
 
-					// Muestra el recibo de compra
+					// Insertar venta
 					Venta v = new Venta();
+					v.registrarVenta(conexion, id, cantidad, totalVenta);
+					
+					// Muestra el recibo de compra
 					v.mostrarTicket(conexion, producto, totalVenta, cantidad);
 
-					// Insertar venta
-					v.registrarVenta(conexion, id, cantidad, totalVenta);
 
 					// Descontar del stock
 					producto.actualizarStockCompra(conexion, cantidad, id);
@@ -238,11 +239,10 @@ public class Tienda {
 
 					// Y se "actualiza" el stock con los productos devueltos
 					Producto.actualizarStockDevolucion(conexion, cantidadProductos, productoId);
-
-					String descontarDinero = "UPDATE ventas SET total = 0, devueLto = TRUE WHERE id = ?";
-					PreparedStatement psDescontar = conexion.prepareStatement(descontarDinero);
-					psDescontar.setInt(1, ventaId);
-					psDescontar.executeUpdate();
+					
+					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
+					Venta v = new Venta();
+					v.descontarDevolucion(conexion, ventaId);
 
 					System.out.println("Devolución registrada correctamente");
 				}
