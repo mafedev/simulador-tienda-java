@@ -76,7 +76,7 @@ public class Main {
 	// Menú secundario para ver la información en la opción 4
 	static char menuSecundario() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Salir");
+		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Volver");
 		return sc.nextLine().charAt(0);
 	}
 

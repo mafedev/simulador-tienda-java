@@ -118,17 +118,20 @@ public class Producto {
 		}
 	}
 	
-	public void mostrarInfoDetallada() {
-		System.out.println("  ║    ID: " + this.id);
-        System.out.println("  ║     Nombre: " + this.nombre);
-        System.out.println("  ║       " + descripcion);
-        System.out.println("  ║       Precio: " + this.precio + " €");
-        System.out.println("  ║       En stock: " + this.cantidad);
-        System.out.println("  ║");
+	public void mostrarInfoDetallada(int opc) { // El parámetro opc es solo para mejorar como se ve por la terminal
+		String simbolo = opc == 1 ? "║" : "";
+		System.out.println("  " + simbolo + "    ID: " + this.id);
+        System.out.println("  " + simbolo + "     Nombre: " + this.nombre);
+        System.out.println("  " + simbolo + "     " + descripcion);
+        System.out.println("  " + simbolo + "     Precio: " + this.precio + " €");
+        System.out.println("  " + simbolo + "     En stock: " + this.cantidad);
+        System.out.println("  " + simbolo + "");
 	}
 	
-	public void mostrarInfo() {
-		System.out.println("  ║   ID: " + this.id);
-        System.out.println("  ║     Nombre: " + this.nombre);
+	public void mostrarInfo(int opc) {
+		String simbolo = opc == 1 ? "║" : " "; // El parámetro opc es solo para mejorar como se ve por la terminal
+		
+		System.out.println("  " + simbolo + "   ID: " + this.id);
+        System.out.println("  " + simbolo + "     Nombre: " + this.nombre);
 	}
 }

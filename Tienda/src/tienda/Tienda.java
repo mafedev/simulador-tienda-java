@@ -69,7 +69,7 @@ public class Tienda {
 				producto.setCantidad(rs.getInt("cantidad"));
 
 				// Muestra la información del producto
-				producto.mostrarInfoDetallada();
+				producto.mostrarInfoDetallada(0);
 
 				if (producto.getCantidad() > 0) { // Comprueba que hallan productos disponibles
 					boolean valido = true;
@@ -271,7 +271,7 @@ public class Tienda {
 		int id = 0;
 		try {
 			do {
-				obtenerProductos(); // Llama al método para "llenar" la ArrayList
+				obtenerProductos(); // Llama al método para para cargar la lista de productos
 
 				System.out.println(" 1. Buscar por nombre\n 2. Buscar por ID\n 3. Volver");
 				opc = sc.nextLine().charAt(0);
@@ -292,7 +292,7 @@ public class Tienda {
 						
 						for(Producto p: productos) { // Itera el ArrayList de productos y si el id coincide muestra la información
 							if(p.getId() == id) {
-								p.mostrarInfoDetallada();
+								p.mostrarInfoDetallada(0);
 							}
 						}
 						break;
@@ -301,9 +301,9 @@ public class Tienda {
 						id = sc.nextInt();
 						sc.nextLine();
 	
-						for (Producto p : productos) {
+						for (Producto p : productos) { // Itera sobre los productos y solo muestra la información del que coincida
 							if (p.getId() == id) {
-								p.mostrarInfoDetallada();
+								p.mostrarInfoDetallada(0);
 							}
 						}
 						break;
@@ -364,6 +364,7 @@ public class Tienda {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	public void mostrarInfoProductos() {
@@ -372,7 +373,7 @@ public class Tienda {
 	    System.out.println("  ╔═══════════════════════════════════╗");
 	    System.out.println("  ║           INSTRUMENTOS            ║");
 	    for (Producto p : productos) {
-	        p.mostrarInfo();
+	        p.mostrarInfo(1);
 	    }
 	    System.out.println("  ╚═══════════════════════════════════╝");
 	}
@@ -382,7 +383,7 @@ public class Tienda {
 		System.out.println("  ╔═════════════════════════════════════════════");
 	    System.out.println("  ║           INFORMACIÓN DE LOS PRODUCTOS");
 	    for (Producto p : productos) {
-	        p.mostrarInfoDetallada();
+	        p.mostrarInfoDetallada(1);
 	    }
 	    System.out.println("  ╚═════════════════════════════════════════════");
 		

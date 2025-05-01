@@ -106,20 +106,21 @@ public class Venta {
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery("SELECT * FROM ventas");
 
+			System.out.println("\n  ┍━━━━━━★━━━━━━┑");
+			System.out.println("             VENTAS");
 			while (rs.next()) {
-				System.out.println("ID: " + rs.getInt("id"));
-				System.out.println("Nombre: " + rs.getInt("producto_id"));
-				System.out.println("Categoria: " + rs.getInt("cantidad"));
-				System.out.println("Total: " + rs.getDouble("total"));
+				System.out.println("  │   ID: " + rs.getInt("id"));
+				System.out.println("  │    Producto ID: " + rs.getInt("producto_id"));
+				System.out.println("  │    Categoria: " + rs.getInt("cantidad"));
+				System.out.println("  │    Total: " + rs.getDouble("total") + " €");
 
 				boolean devuelto = rs.getBoolean("devuelto");
 				if (devuelto) {
-					System.out.println("Ha sido devuelto"); // Si se ha hecho una devolución, muestra el mensaje
+					System.out.println("  │    Ha sido devuelto"); // Si se ha hecho una devolución, se muestra el mensaje
 				}
-
-				System.out.println();
+				System.out.println("  │");
 			}
-			System.out.println("____________________\n");
+			System.out.println("\n  ┕━━━━━━★━━━━━━┙\n");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -144,7 +145,7 @@ public class Venta {
 		// Se muestra la descripción de la compra
 		System.out.println("\n"
 				+ "      𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃 \r\n"
-				+ "     │                               Id compra: " + id + "       |\r\n"
+				+ "     │                                  Id compra: " + id + "    |\r\n"
 				+ "     │                                                  |\r\n"
 				+ "     │       @                                          |\r\n"
 				+ "     │     @@@@@      Producto: " + p.getNombre() +"\r\n"
