@@ -119,16 +119,16 @@ public class Producto {
 	}
 	
 	public void mostrarInfoDetallada() {
-		System.out.println("\n  │   ID: " + this.id);
-        System.out.println("  │     Nombre: " + this.nombre);
-        System.out.println("  |     " + descripcion);
-        System.out.println("  │     Precio: " + this.precio + " €");
-        System.out.println("  │     En stock: " + this.cantidad);
-        System.out.println("  │\n");
+		System.out.println("  ║    ID: " + this.id);
+        System.out.println("  ║     Nombre: " + this.nombre);
+        System.out.println("  ║       " + descripcion);
+        System.out.println("  ║       Precio: " + this.precio + " €");
+        System.out.println("  ║       En stock: " + this.cantidad);
+        System.out.println("  ║");
 	}
 	
 	public void mostrarInfo() {
-		System.out.println("  │   ID: " + this.id);
-        System.out.println("  │     Nombre: " + this.nombre);
+		System.out.println("  ║   ID: " + this.id);
+        System.out.println("  ║     Nombre: " + this.nombre);
 	}
 }
