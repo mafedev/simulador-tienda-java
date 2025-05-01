@@ -19,7 +19,7 @@ public class Main {
 		System.out.println("\nBIENVENID@");
 		try {
 			Connection c = DriverManager.getConnection(url, "root", "root");
-			Tienda t = new Tienda(c); // Se crea una tienda con la conexión para no abrir varias conexiones
+			Tienda t = new Tienda(c); // Se crea una tienda con una conexión para no abrir varias conexiones
 
 			// Bucle principal
 			do {
@@ -69,14 +69,14 @@ public class Main {
 	// Menú principal
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\nIngrese una opción\n 1. Comprar producto\n 2. Añadir producto\n 3. Devolver producto\n 4. Eliminar Producto\n 5. Ver información de los productos\n 6. Ver ventas\n 7. Ver devoluciones\n 8. Salir");
+		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Añadir producto\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Salir");
 		return sc.nextLine().charAt(0);
 	}
 
 	// Menú secundario para ver la información en la opción 4
 	static char menuSecundario() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Seleccione que información quiere ver\n 1. Ver todos los productos\n 2. Buscar producto por nombre o ID\n 3. Salir");
+		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Salir");
 		return sc.nextLine().charAt(0);
 	}
 
@@ -88,7 +88,7 @@ public class Main {
 			switch (menu) {
 				case '1':
 					// Hacer que muestre lo de informacion detallada
-					t.mostrarProductos();
+					t.mostrarInfoDetalladaProductos();
 					break;
 				case '2':
 					t.buscarProducto();

@@ -11,7 +11,7 @@ public class Subcategoria {
 	private String nombre;
 	private Categoria categoria;
 		
-	// Constructores
+	// --------------------- Constructores ---------------------
 	public Subcategoria() {}
 
 	public Subcategoria(int id, String nombre, Categoria categoria) {
@@ -20,7 +20,7 @@ public class Subcategoria {
 		this.categoria = categoria;
 	}
 
-	// Getters y Setters
+	// --------------------- Getters y Setters ---------------------
 	public int getId() {
 		return id;
 	}

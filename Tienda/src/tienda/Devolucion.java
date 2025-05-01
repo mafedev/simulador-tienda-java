@@ -34,7 +34,7 @@ public class Devolucion {
 				System.out.println("   ID: " + rs.getInt("id"));
 				System.out.println("    Id de la venta: " + rs.getInt("producto_id"));
 				System.out.println("    Motivo: " + rs.getString("motivo"));
-				System.out.println("    Dinero: " + rs.getDouble("dinero_devuelto"));
+				System.out.println("    Dinero devuelto: " + rs.getDouble("dinero_devuelto") + " €");
 				System.out.println();
 			}
 			
