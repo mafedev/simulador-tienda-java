@@ -118,7 +118,13 @@ public class Producto {
 		}
 	}
 	
-	public void mostrarInfoDetallada(int opc) { // El parámetro opc es solo para mejorar como se ve por la terminal
+	public void mostrarInfoDetallada(int opc) { 
+		/*
+		 * El parámetro opc es solo para mejorar como se ve por la terminal, si se pone
+		 * un 1 significa que es para ver la información de todos los productos en una
+		 * lista, entonces muestra un ║, de lo contrario es cuando se quiere ver la
+		 * información de un producto en específico
+		 */
 		String simbolo = opc == 1 ? "║" : "";
 		System.out.println("  " + simbolo + "    ID: " + this.id);
         System.out.println("  " + simbolo + "     Nombre: " + this.nombre);

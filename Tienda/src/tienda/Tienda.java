@@ -45,32 +45,31 @@ public class Tienda {
 
 	// --------------------- Métodos ---------------------
 	public void venderProducto() {
-		obtenerProductos();
-
 		Scanner sc = new Scanner(System.in);
-		mostrarInfoProductos(); // Se llama a la función para muestrar los productos con su información
+		obtenerProductos(); // Se llama el método para que cargue los productos de la tabla
+
+		mostrarInfoProductos(); // Se llama a la función para mostrar los productos con su información
 
 		System.out.println("\nIngrese el id del producto que quiere comprar");
 		int id = sc.nextInt();
 
 		for (Producto p : productos) {
 			if (p.getId() == id) {
-				// Muestra la información del producto
+				// Muestra la información del producto si coincide con el id
 				p.mostrarInfoDetallada(0);
 
-				if (p.getCantidad() > 0) { // Comprueba que hallan productos disponibles
+				if (p.getCantidad() > 0) { // Verifica si hay productos disponibles
 					boolean valido = true;
 
 					System.out.println("¿Cuántos quiere comprar?");
 					int cantidad = sc.nextInt();
 
-					// Comprueba que sea la cantidad sea válida
+					// Comprueba la cantidad sea válida
 					if (cantidad <= 0 || cantidad > p.getCantidad()) {
 						valido = false;
 					}
 
-					while (!valido) { // Si la cantidad introducida es inválida, entonces entra en el bucle hasta que
-										// ingrese una cantidad válida
+					while (!valido) { // Si la cantidad introducida es inválida, entonces entra en el bucle hasta que ingrese una cantidad válida
 						System.out.println("Ingrese una cantidad válida");
 						cantidad = sc.nextInt();
 
@@ -84,17 +83,17 @@ public class Tienda {
 					// Se calcula el total de la compra
 					this.totalVenta = p.getPrecio() * cantidad;
 
-					// Insertar venta
+					// Luego se inserta dentro de la tabla ventas
 					Venta v = new Venta();
-					v.registrarVenta(conexion, id, cantidad, totalVenta);
+					v.registrarVenta(conexion, id, cantidad, totalVenta); // Se registra la compra llamando al método
 
 					// Muestra el recibo de compra
 					v.mostrarTicket(conexion, p, totalVenta, cantidad);
 
-					// Descontar del stock
+					// Descuenta del stock los productos comprados
 					p.actualizarStockCompra(conexion, cantidad, id);
 				} else {
-					System.out.println("Lo sentimos, no se puede realizar la compra, no hay productos disponibles");
+					System.out.println("Lo sentimos, no se puede realizar la compra, no hay productos disponibles"); // Si la cantidad es 0, no se puede realizar la compra
 				}
 			}
 		}
@@ -352,6 +351,8 @@ public class Tienda {
 
 	    System.out.println("  ╔═══════════════════════════════════╗");
 	    System.out.println("  ║           INSTRUMENTOS            ║");
+	    System.out.println("  ║           Y ACCESORIOS            ║");
+
 	    for (Producto p : productos) {
 	        p.mostrarInfo(1);
 	    }
