@@ -101,7 +101,9 @@ public class Tienda {
 
 	public void agregarProducto() {
 		Scanner sc = new Scanner(System.in);
-		int id = 0;
+		obtenerProductos();
+		int id = 0, numSubcategoria = 0;
+		String nombreSubcategoria = "";
 
 		try {
 			// Muestra los productos disponibles
@@ -115,8 +117,14 @@ public class Tienda {
 			System.out.println("Ingrese la descripción del producto");
 			String descripcion = sc.nextLine();
 
-			// Selección de categoría
+			for(Producto p: productos) { // Comprueba que el producto que ingrese no exista
+				if(p.getNombre().equalsIgnoreCase(nombre) || p.getDescripcion().equalsIgnoreCase(descripcion)) {
+					System.out.println("El producto ya existe");
+					return;
+				}
+			}
 			
+			// Selección de categoría			
 			Categoria.mostrarCategorias(conexion);
 			System.out.println("Ingrese el número de la categoría correspondiente, o ingrese 0 si desea crear una nueva categoría");
 			int categoria = sc.nextInt();
@@ -152,13 +160,22 @@ public class Tienda {
 						System.out.println("La categoría se creó con éxito");
 					}
 				}
+				
+				System.out.println("Ahora ingrese el nombre de la subcategoria a la que pertenece, si no pertenece a ninguna ingrese null");
+				nombreSubcategoria = sc.nextLine();
+				
+				
+			} else {
+				// Muestra las subcategorías que hay
+				Subcategoria.mostrarSubcategorias(conexion);
+				System.out.println("Ahora ingrese si pertenece a alguna subcategoría, si no, ingrese 0");
+				numSubcategoria = sc.nextInt();
 			}
 
-			// Muestra las subcategorías que hay
-			Subcategoria.mostrarSubcategorias(conexion);
-			System.out.println("Ahora ingrese si pertenece a alguna subcategoría, si no, ingrese 0");
-			int subcategoria = sc.nextInt();
-
+			if(nombreSubcategoria.equalsIgnoreCase("null")) {
+				numSubcategoria = 0;
+			}
+			
 			// Solicita el precio y la cantidad
 			System.out.println("Ingrese el precio del articulo");
 			double precio = sc.nextDouble();
@@ -169,7 +186,7 @@ public class Tienda {
 			// Se inserta en la tabla productos el nuevo producto
 			Statement s = conexion.createStatement();
 			String fila = String.format("INSERT INTO productos (nombre, descripcion, categoria_id, subcategoria_id, precio, cantidad) VALUES ('%s', '%s', '%d', %s, '%f', '%d')",
-					nombre, descripcion, categoria, (subcategoria == 0 ? "NULL" : subcategoria), precio, cantidad); // Si la subcategoria es 0, es decir, no tiene subcategoría, inserta un null
+					nombre, descripcion, categoria, (numSubcategoria == 0 ? "NULL" : numSubcategoria), precio, cantidad); // Si la subcategoria es 0, es decir, no tiene subcategoría, inserta un null
 
 			int confirmar = s.executeUpdate(fila);
 
@@ -357,6 +374,7 @@ public class Tienda {
 	        p.mostrarInfo(1);
 	    }
 	    System.out.println("  ╚═══════════════════════════════════╝");
+	    
 	}
 
 	public void mostrarInfoDetalladaProductos() {

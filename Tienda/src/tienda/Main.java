@@ -15,7 +15,6 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		char opc;
-
 		System.out.println("\nBIENVENID@");
 		try {
 			Connection c = DriverManager.getConnection(url, "root", "root");
@@ -24,7 +23,6 @@ public class Main {
 			// Bucle principal
 			do {
 				opc = menuPrincipal(); 
-
 				switch (opc) {
 					case '1':
 						t.venderProducto();
@@ -34,7 +32,6 @@ public class Main {
 						break;
 					case '3':
 						t.devolverProducto();
-						// que se puedan devolver x cantidad de productos
 						break;
 					case '4':
 						t.eliminarProducto();
@@ -49,27 +46,39 @@ public class Main {
 						Devolucion.mostrarDevoluciones(c);
 						break;
 					case '8':
+						try {
+							String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas";
+							Statement suma = c.createStatement();
+							ResultSet rs = suma.executeQuery(sumaVentas);
+							
+							if (rs.next()) {
+								double totalVentas = rs.getDouble("totalVentas");
+								System.out.println("El total acumulado en caja es: " + totalVentas + " €");
+							} else {
+								System.out.println("No hay ventas registradas.");
+							}
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+						break;
+					case '9':
 						System.out.println("Saliendo...");
-	
-						System.out.println("El total en caja es de: " + t.getTotalVenta() + " €");
 						break;
 					default:
 						System.out.println("Ingrese una opción correcta");
 				}
-
-			} while (opc != '8');
+			} while (opc != '9');
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	//--------------------- MENÚS ---------------------
 	// Menú principal
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Añadir producto\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Salir");
+		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Añadir producto\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Total de ventas\n  9. Salir");
 		return sc.nextLine().charAt(0);
 	}
 

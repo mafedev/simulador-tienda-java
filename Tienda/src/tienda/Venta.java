@@ -79,7 +79,7 @@ public class Venta {
 
 			int filasAfectadas = psVenta.executeUpdate();
 			if (filasAfectadas > 0) { // Verifica si la venta se insertó correctamente en la tabla
-				System.out.println("Compra registrada correctamente");
+				System.out.println("¡Compra registrada correctamente!");
 			} else {
 				System.out.println("Error al registrar la compra");
 			}
