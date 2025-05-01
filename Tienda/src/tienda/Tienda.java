@@ -45,48 +45,36 @@ public class Tienda {
 
 	// --------------------- Métodos ---------------------
 	public void venderProducto() {
+		obtenerProductos();
+
 		Scanner sc = new Scanner(System.in);
 		mostrarInfoProductos(); // Se llama a la función para muestrar los productos con su información
 
 		System.out.println("\nIngrese el id del producto que quiere comprar");
 		int id = sc.nextInt();
 
-		try {
-			String consulta = "SELECT * FROM productos WHERE id = ?"; // Genera la consulta para buscar el producto por el id
-			PreparedStatement ps = conexion.prepareStatement(consulta);
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery(); // Ejecuta la consulta sql
-
-			if (rs.next()) { // Confirma si el id existe
-				// Obtiene el nombre, el precio y la cantidad del producto
-				Producto producto = new Producto();
-				producto.setId(rs.getInt("id"));
-				producto.setNombre(rs.getString("nombre"));
-				producto.setDescripcion(rs.getString("descripcion"));
-				producto.setCategoriaId(rs.getInt("categoria_id"));
-				producto.setSubcategoriaId(rs.getInt("subcategoria_id"));
-				producto.setPrecio(rs.getDouble("precio"));
-				producto.setCantidad(rs.getInt("cantidad"));
-
+		for (Producto p : productos) {
+			if (p.getId() == id) {
 				// Muestra la información del producto
-				producto.mostrarInfoDetallada(0);
+				p.mostrarInfoDetallada(0);
 
-				if (producto.getCantidad() > 0) { // Comprueba que hallan productos disponibles
+				if (p.getCantidad() > 0) { // Comprueba que hallan productos disponibles
 					boolean valido = true;
 
 					System.out.println("¿Cuántos quiere comprar?");
 					int cantidad = sc.nextInt();
 
 					// Comprueba que sea la cantidad sea válida
-					if (cantidad <= 0 || cantidad > producto.getCantidad()) {
+					if (cantidad <= 0 || cantidad > p.getCantidad()) {
 						valido = false;
 					}
 
-					while (!valido) { // Si la cantidad introducida es inválida, entonces entra en el bucle hasta que ingrese una cantidad válida
+					while (!valido) { // Si la cantidad introducida es inválida, entonces entra en el bucle hasta que
+										// ingrese una cantidad válida
 						System.out.println("Ingrese una cantidad válida");
 						cantidad = sc.nextInt();
 
-						if (cantidad <= 0 || cantidad > producto.getCantidad()) { // Comprueba la cantidad hasta que sea válida
+						if (cantidad <= 0 || cantidad > p.getCantidad()) { // Comprueba la cantidad hasta que sea válida
 							valido = false;
 						} else {
 							valido = true;
@@ -94,30 +82,22 @@ public class Tienda {
 					}
 
 					// Se calcula el total de la compra
-					this.totalVenta = producto.getPrecio() * cantidad;
+					this.totalVenta = p.getPrecio() * cantidad;
 
 					// Insertar venta
 					Venta v = new Venta();
 					v.registrarVenta(conexion, id, cantidad, totalVenta);
 
 					// Muestra el recibo de compra
-					v.mostrarTicket(conexion, producto, totalVenta, cantidad);
+					v.mostrarTicket(conexion, p, totalVenta, cantidad);
 
 					// Descontar del stock
-					producto.actualizarStockCompra(conexion, cantidad, id);
-
+					p.actualizarStockCompra(conexion, cantidad, id);
 				} else {
 					System.out.println("Lo sentimos, no se puede realizar la compra, no hay productos disponibles");
 				}
-
-			} else { // Si el id no existe
-				System.out.println("Producto no encontrado");
-				return;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-
 	}
 
 	public void agregarProducto() {
