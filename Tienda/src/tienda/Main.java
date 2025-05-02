@@ -41,34 +41,15 @@ public class Main {
 						logicaOpcion5(t, it);
 						break;
 					case '6':
-						Venta.mostrarVentas(c);
+						logicaOpcion6(c);
 						break;
 					case '7':
-						Devolucion.mostrarDevoluciones(c);
-						break;
-					case '8':
-						try {
-							String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas";
-							Statement suma = c.createStatement();
-							ResultSet rs = suma.executeQuery(sumaVentas);
-							
-							if (rs.next()) {
-								double totalVentas = rs.getDouble("totalVentas");
-								System.out.println("El total acumulado en caja es: " + totalVentas + " €");
-							} else {
-								System.out.println("No hay ventas registradas");
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-						break;
-					case '9':
 						System.out.println("Saliendo...");
 						break;
 					default:
 						System.out.println("Ingrese una opción correcta");
 				}
-			} while (opc != '9');
+			} while (opc != '7');
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -79,7 +60,7 @@ public class Main {
 	// Menú principal
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Actualizar inventario\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Total de ventas\n  9. Salir");
+		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Actualizar inventario\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Informe de ventas\n  7. Salir");
 		return sc.nextLine().charAt(0);
 	}
 
@@ -93,7 +74,14 @@ public class Main {
 	// Menú secundario para ver la información en la opción 4
 	static char menuOpcion5() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre\n  3. Buscar por ID\n  4. Buscar por categoria\n  5. Busca por subcategoría\n  6. Volver");
+		System.out.println("\n Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre\n  3. Buscar por ID\n  4. Buscar por categoria\n  5. Busca por subcategoría\n  6. Volver");
+		return sc.nextLine().charAt(0);
+	}
+	
+	// Menú secundario para ver el informe de ventas (opción 6)
+	static char menuOpcion6() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("\n Seleccione una opción\n  1. Ver ventas\n  2. Ver devoluciones\n  3. Total de ventas\n  4. Volver");
 		return sc.nextLine().charAt(0);
 	}
 
@@ -153,4 +141,40 @@ public class Main {
 		} while (menu != '6');
 	}
 	
+	static void logicaOpcion6(Connection c) {
+		char opc;
+		do {
+			opc = menuOpcion6();
+			switch(opc) {
+				case '1':
+					Venta.mostrarVentas(c);
+					break;
+				case '2':
+					Devolucion.mostrarDevoluciones(c);
+					break;
+				case '3':
+					try {
+						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas";
+						Statement suma = c.createStatement();
+						ResultSet rs = suma.executeQuery(sumaVentas);
+						
+						if (rs.next()) {
+							double totalVentas = rs.getDouble("totalVentas");
+							System.out.println("El total acumulado en caja es: " + totalVentas + " €");
+						} else {
+							System.out.println("No hay ventas registradas");
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					break;
+				case '4':
+					System.out.println("Volviendo...");
+					break;
+				default:
+					System.out.println("Ingrese una opción válida");
+			}
+		}while(opc != '4');
+			
+	}
 }
