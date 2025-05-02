@@ -221,26 +221,27 @@ public class Tienda {
 
 	public void devolverProducto() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Ingrese el id de la compra, se encuentra en la parte superior del ticket");
+		System.out.println("Para realizar la devolución ingrese la siguiente información\n Ingrese el id de la compra, se encuentra en la parte superior del ticket");
 		int ventaId = sc.nextInt();
 		sc.nextLine();
 		
-		System.out.println("Indique el motivo de la devolución:");
+		System.out.println(" Indique el motivo de la devolución:");
 		String motivo = sc.nextLine();
 
 		try {
-			// Verifica si la venta existe y si corresponde al producto
+			// Verifica si la venta existe
 			String verificarVenta = "SELECT * FROM ventas WHERE id = ?";
 			PreparedStatement psVerificar = conexion.prepareStatement(verificarVenta);
 			psVerificar.setInt(1, ventaId);
 			ResultSet rs = psVerificar.executeQuery();
 
+			// Verifica que no se haya hecho una devolución con el mismo venta_id
 			String verificarDevolucion = "SELECT * FROM devoluciones WHERE venta_id = ?";
 			PreparedStatement psDevolucion = conexion.prepareStatement(verificarDevolucion);
 			psDevolucion.setInt(1, ventaId);
 			ResultSet rsDevolucion = psDevolucion.executeQuery();
 
-			if (rs.next() && !rsDevolucion.next()) {
+			if (rs.next() && !rsDevolucion.next()) { // Si la venta existe y no han hecho devoluciones, entonces hace la devolucón
 				int cantidadProductos = rs.getInt("cantidad");
 				int dineroDevuelto = rs.getInt("total");
 
@@ -255,15 +256,13 @@ public class Tienda {
 					productoId = rsId.getInt("producto_id");
 					// Se inserta la devolución en la tabla devoluciones
 					Devolucion.registrarDevolucion(conexion, ventaId, productoId, motivo, dineroDevuelto);
+					System.out.println("Devolución registrada correctamente");
 
 					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
 					Venta v = new Venta();
 					v.descontarDevolucion(conexion, ventaId);
-
-					System.out.println("Devolución registrada correctamente");
 				}
-
-			} else if (rsDevolucion.next()) {
+			} else if (rsDevolucion.next()) { // Si ya hay una devolución
 				System.out.println("No se puede realizar la devolcuion, ya hay una devolucion registrada con este id");
 			} else {
 				System.out.println("No se encontró una venta con esos datos");
