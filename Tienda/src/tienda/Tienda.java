@@ -107,12 +107,16 @@ public class Tienda {
 			System.out.println("Ingrese la descripción del producto");
 			String descripcion = sc.nextLine();
 
-			for(Producto p: productos) { // Comprueba que el producto que ingrese no exista
-				if(p.getNombre().equalsIgnoreCase(nombre) || p.getDescripcion().equalsIgnoreCase(descripcion)) {
-					System.out.println("El producto ya existe");
-					return;
-				}
-			}
+			String consulta = "SELECT * FROM productos WHERE nombre = ? OR descripcion = ?";
+			PreparedStatement psRepetido = conexion.prepareStatement(consulta);
+			psRepetido.setString(1, nombre);
+			psRepetido.setString(2, descripcion);
+			ResultSet rs = psRepetido.executeQuery();
+
+		    if (rs.next()) { // Si hay algún resultado, significa que el producto ya existe
+		        System.out.println("El producto ya existe");
+		        return;
+		    }
 			
 			// Selección de categoría			
 			Categoria.mostrarCategorias(conexion);
