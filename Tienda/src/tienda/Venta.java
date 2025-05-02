@@ -160,4 +160,23 @@ public class Venta {
 		
 	}
 	
+	public void mostrarInfoVentaId(Connection c, int id) {
+		try {
+			String venta = "SELECT * FROM ventas WHERE id = ?";
+			PreparedStatement ps = c.prepareStatement(venta);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				System.out.println("  INFORMACIÓN DE LA VENTA");
+				System.out.println("     ID: " + rs.getInt("id"));
+				System.out.println("      Producto ID: " + rs.getInt("producto_id"));
+				System.out.println("      Categoria: " + rs.getInt("cantidad"));
+				System.out.println("      Total: " + rs.getDouble("total") + " €");
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

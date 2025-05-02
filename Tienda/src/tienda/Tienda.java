@@ -278,13 +278,15 @@ public class Tienda {
 				int productoId = 0;
 				if (rsId.next()) {
 					productoId = rsId.getInt("producto_id");
+					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
+					Venta v = new Venta();
+					v.mostrarInfoVentaId(conexion, ventaId);
+					v.descontarDevolucion(conexion, ventaId);
+					
 					// Se inserta la devolución en la tabla devoluciones
 					Devolucion.registrarDevolucion(conexion, ventaId, productoId, motivo, dineroDevuelto);
 					System.out.println("Devolución registrada correctamente");
 
-					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
-					Venta v = new Venta();
-					v.descontarDevolucion(conexion, ventaId);
 				}
 			} else if (rsDevolucion.next()) { // Si ya hay una devolución
 				System.out.println("No se puede realizar la acción, ya hay una devolución registrada con este id");
