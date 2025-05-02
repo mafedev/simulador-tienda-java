@@ -17,14 +17,17 @@ public class Tienda {
 	// --------------------- Constructores ---------------------
 	public Tienda() {
 	}
-
-	public Tienda(Connection c, double totalVenta) {
-		this.conexion = c;
-		this.totalVenta = totalVenta;
+	
+	public Tienda(Connection conexion) {
+		this.conexion = conexion;
+		this.infoTienda = new InfoTienda(conexion); // Inicializa infoTienda con la conexión
 	}
 
-	public Tienda(Connection c) {
-		this.conexion = c;
+	public Tienda(InfoTienda infoTienda, Connection conexion, double totalVenta, ArrayList<Producto> productos) {
+		this.infoTienda = new InfoTienda(conexion);
+		this.conexion = conexion;
+		this.totalVenta = totalVenta;
+		this.productos = productos;
 	}
 
 	// --------------------- Getters y Setters ---------------------
@@ -145,12 +148,12 @@ public class Tienda {
 				System.out.println("Ingrese el número de la categoría correspondiente, o ingrese 0 si desea crear una nueva categoría"); // Selecciona la categoría o la crea	
 				categoria = sc.nextInt();
 
-				String verificarCategoria = "SELECT id FROM categorias WHERE id = ?"; // Se verifica si la categoría ingresada es válida, es decir, que exista
+				String verificarCategoria = "SELECT id FROM categorias WHERE id = ?"; // Se verifica si la categoría ingresada es válida
 				PreparedStatement psVerificar = conexion.prepareStatement(verificarCategoria);
 				psVerificar.setInt(1, categoria);
 				ResultSet rsVerificar = psVerificar.executeQuery();
 
-				if (rsVerificar.next() || categoria == 0) { // Si hay un resultado o se ingresa el cero, se toma como válido
+				if (rsVerificar.next() || categoria == 0) { // Si hay un resultado o se ingresa cero, se toma como válido
 					categoriaValida = true;
 				} else {
 					System.out.println("La categoría ingresada no es válida. Intente nuevamente.");
@@ -284,7 +287,7 @@ public class Tienda {
 					v.descontarDevolucion(conexion, ventaId);
 				}
 			} else if (rsDevolucion.next()) { // Si ya hay una devolución
-				System.out.println("No se puede realizar la devolcuion, ya hay una devolucion registrada con este id");
+				System.out.println("No se puede realizar la acción, ya hay una devolución registrada con este id");
 			} else {
 				System.out.println("No se encontró una venta con esos datos");
 			}
@@ -302,11 +305,11 @@ public class Tienda {
 
 		try {
 			/*
-			 * Verifica si el producto tiene alguna venta relacionada. Si tiene, no se puede
-			 * borrar porque la tabla de ventas tiene una clave foránea que apunta a la
-			 * tabla de productos. Entonces lo más sencillo es no dejar que lo elimine,
-			 * porque por otro lado se tendría que eliminar también la venta o editar la
-			 * tabla ventas
+			 * Se verifica si el producto tiene alguna venta relacionada. Si la tiene, no se
+			 * puede borrar el producto, porque la tabla de ventas tiene una clave foránea
+			 * que apunta a la tabla de productos. Entonces lo más sencillo es no dejar que
+			 * lo elimine, porque por de lo contrario se tendría que eliminar también la venta (lo
+			 * cual no tiene mucho sentido) o editar la tabla ventas, pero sería más complejo
 			 */
 			
 			String contarVentas = "SELECT COUNT(*) FROM ventas WHERE producto_id = ?";
@@ -331,12 +334,26 @@ public class Tienda {
 			if (confirmar > 0) {
 				System.out.println("¡Producto eliminado correctamente!");
 			} else {
-				System.out.println("Producto no encontrado");
+				System.out.println("No se encontró el producto");
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public void actualizarPrecio() {
+        Scanner sc = new Scanner(System.in);
+        cargarProductos();
+        
+        System.out.println("Ingrese el ID del producto");
+        int id = sc.nextInt();
 
+		for (Producto p : productos) {
+			if (p.getId() == id) {
+				p.actualizarPrecio(conexion);
+			}
+		}
+        
+    }
 }

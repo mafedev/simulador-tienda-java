@@ -29,7 +29,7 @@ public class Main {
 						t.venderProducto();
 						break;
 					case '2':
-						logicaOpcion2(t);
+						logicaOpcion2(t, it);
 						break;
 					case '3':
 						t.devolverProducto();
@@ -56,7 +56,7 @@ public class Main {
 								double totalVentas = rs.getDouble("totalVentas");
 								System.out.println("El total acumulado en caja es: " + totalVentas + " €");
 							} else {
-								System.out.println("No hay ventas registradas.");
+								System.out.println("No hay ventas registradas");
 							}
 						} catch (SQLException e) {
 							e.printStackTrace();
@@ -97,7 +97,7 @@ public class Main {
 		return sc.nextLine().charAt(0);
 	}
 
-	static void logicaOpcion2(Tienda t) {
+	static void logicaOpcion2(Tienda t, InfoTienda it) {
 		char opc;
 		do {
 			opc = menuOpcion2();
@@ -106,11 +106,12 @@ public class Main {
 					t.agregarProducto();
 					break;
 				case '2':
-					t.mostrarInfoProductos();
+					t.cargarProductos();
+					it.mostrarInfoProductos(t.getProductos());
 					Producto.actualizarStock(t.getConexion());
 					break;
 				case '3':
-					
+					t.actualizarPrecio();
 					break;
 				case '4':
 					System.out.println("Volviendo...");

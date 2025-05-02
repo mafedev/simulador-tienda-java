@@ -106,7 +106,6 @@ public class Producto {
 		}
 	}
 
-	// Cuando hay una devolución, actualiza el stock sumando los productos devueltos
 	public static void actualizarStock(Connection c) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Ingrese el ID del producto");
@@ -125,6 +124,33 @@ public class Producto {
 			e.printStackTrace();
 		}
 	}
+	
+	public void actualizarPrecio(Connection c) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("El precio actual del producto es: " + this.precio);
+        System.out.println("Ingrese el nuevo precio: ");
+        double nuevoPrecio = sc.nextDouble();
+        
+        if (nuevoPrecio > 0) { // Verificar que el nuevo precio sea válido
+        	try {
+    			String actualizar = "UPDATE productos SET precio = ? WHERE id = ?";
+    			PreparedStatement ps = c.prepareStatement(actualizar);
+    			ps.setDouble(1, nuevoPrecio);
+    			ps.setInt(2, id);
+    			
+    			 int confirmar = ps.executeUpdate();
+    		        if (confirmar > 0) {
+    		            System.out.println("Precio actualizado correctamente");
+    		        } else {
+    		            System.out.println("No se pudo actualizar el precio");
+    		        }
+    		} catch(SQLException e) {
+    			e.printStackTrace();
+    		}
+        } else {
+            System.out.println("Ingrese un precio válido");
+        }
+    }
 	
 	public void mostrarInfoDetallada(int opc) { 
 		/*
