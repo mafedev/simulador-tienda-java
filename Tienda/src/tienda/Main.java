@@ -2,7 +2,6 @@ package tienda;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -60,31 +59,45 @@ public class Main {
 	// Menú principal
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Actualizar inventario\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Informe de ventas\n  7. Salir");
+		System.out.println("\n   ╭────────────────────────────────────────╮");
+		System.out.println("      Ingrese una opción\n        1. Comprar producto\n        2. Actualizar inventario\n        3. Devolver producto\n        4. Eliminar Producto\n        5. Ver información de los productos\n        6. Informe de ventas\n        7. Salir");
+		System.out.println("   ╰────────────────────────────────────────╯");
+		System.out.print("⏵"); 
 		return sc.nextLine().charAt(0);
 	}
 
 	// Menú secundario para la opción 2
 	static char menuOpcion2() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n 1. Agregar nuevo producto\n 2. Actualizar stock de producto un existente\n 3. Modificar precio de un producto\n 4. Salir ");
+		System.out.println("\n   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.println("      1. Agregar nuevo producto\n      2. Actualizar stock de producto un existente\n      3. Modificar precio de un producto\n      4. Volver ");
+		System.out.println("   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.print("\n⏵");
 		return sc.nextLine().charAt(0);
 	}
 	
 	// Menú secundario para ver la información en la opción 4
 	static char menuOpcion5() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre\n  3. Buscar por ID\n  4. Buscar por categoria\n  5. Busca por subcategoría\n  6. Volver");
+		System.out.println("\n   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.println("      Seleccione que información quiere ver\n       1. Ver información detallada de todos los productos\n       2. Buscar producto por nombre\n       3. Buscar por ID\n       4. Buscar por categoria\n       5. Busca por subcategoría\n       6. Volver");
+		System.out.println("   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.print("⏵");
 		return sc.nextLine().charAt(0);
 	}
 	
 	// Menú secundario para ver el informe de ventas (opción 6)
 	static char menuOpcion6() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Seleccione una opción\n  1. Ver ventas\n  2. Ver devoluciones\n  3. Total de ventas\n  4. Volver");
+		System.out.println("\n   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.println("      Seleccione una opción\n       1. Ver ventas\n       2. Ver devoluciones\n       3. Total de ventas\n       4. Volver");
+		System.out.println("   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈");
+		System.out.print("⏵");
 		return sc.nextLine().charAt(0);
 	}
 
+	//--------------------- SWITCHES MENÚS SECUNDARIOS ---------------------
+	// Maneja la lógica de la opción 2 del menú
 	static void logicaOpcion2(Tienda t, InfoTienda it) {
 		char opc;
 		do {
@@ -94,9 +107,9 @@ public class Main {
 					t.agregarProducto();
 					break;
 				case '2':
-					t.cargarProductos();
-					it.mostrarInfoProductos(t.getProductos());
-					Producto.actualizarStock(t.getConexion());
+					t.cargarProductos(); // Carga los productos
+					it.mostrarInfoProductos(t.getProductos()); // Muestra los productos disponibles
+					Producto.actualizarStock(t.getConexion()); // Llama al método
 					break;
 				case '3':
 					t.actualizarPrecio();
@@ -109,7 +122,7 @@ public class Main {
 		} while (opc != '4');
 	}
 	
-	// Switch que maneja la logica del segundo menú
+	// Maneja la logica de la opción 5 del menú
 	static void logicaOpcion5(Tienda t, InfoTienda it) {
 		Scanner sc = new Scanner(System.in);
 		char menu, opc;
@@ -141,20 +154,21 @@ public class Main {
 		} while (menu != '6');
 	}
 	
+	// Maneja la lógica de la opción 6 del menú
 	static void logicaOpcion6(Connection c) {
 		char opc;
 		do {
 			opc = menuOpcion6();
 			switch(opc) {
 				case '1':
-					Venta.mostrarVentas(c);
+					Venta.mostrarVentas(c); // Llama al método correspondiente
 					break;
 				case '2':
-					Devolucion.mostrarDevoluciones(c);
+					Devolucion.mostrarDevoluciones(c); // Llama al método correspondiente
 					break;
 				case '3':
 					try {
-						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas";
+						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas"; // Hace una suma de los totales de todas la ventas para mostrar cuánto dinero hay hasta el momento
 						Statement suma = c.createStatement();
 						ResultSet rs = suma.executeQuery(sumaVentas);
 						
