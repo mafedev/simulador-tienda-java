@@ -111,14 +111,14 @@ public class Venta {
 			while (rs.next()) {
 				System.out.println("  │   ID: " + rs.getInt("id"));
 				System.out.println("  │    Producto ID: " + rs.getInt("producto_id"));
-				System.out.println("  │    Categoria: " + rs.getInt("cantidad"));
-				System.out.println("  │    Total: " + rs.getDouble("total") + " €");
+				System.out.println("  │    Unidades: " + rs.getInt("cantidad"));
+				System.out.print("  │      Total: " + rs.getDouble("total") + " €");
 
 				boolean devuelto = rs.getBoolean("devuelto");
 				if (devuelto) {
-					System.out.println("  │    Ha sido devuelto"); // Si se ha hecho una devolución, se muestra el mensaje
+					System.out.print("     (Ha sido devuelto)"); // Si se ha hecho una devolución, se muestra el mensaje
 				}
-				System.out.println("  │");
+				System.out.println("\n  │");
 			}
 			System.out.println("\n  ┕━━━━━━★━━━━━━┙\n");
 
