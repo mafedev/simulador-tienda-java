@@ -19,6 +19,7 @@ public class Main {
 		try {
 			Connection c = DriverManager.getConnection(url, "root", "root");
 			Tienda t = new Tienda(c); // Se crea una tienda con una conexión para no abrir varias conexiones
+			InfoTienda it = new InfoTienda(c);
 
 			// Bucle principal
 			do {
@@ -37,7 +38,7 @@ public class Main {
 						t.eliminarProducto();
 						break;
 					case '5':
-						logicaOpcion4(t);
+						logicaOpcion5(t, it);
 						break;
 					case '6':
 						Venta.mostrarVentas(c);
@@ -90,9 +91,9 @@ public class Main {
 	}
 	
 	// Menú secundario para ver la información en la opción 4
-	static char menuOpcion4() {
+	static char menuOpcion5() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Buscar por categoria\n  4. Busca por subcategoría\n  5. Volver");
+		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre\n  3. Buscar por ID\n  4. Buscar por categoria\n  5. Busca por subcategoría\n  6. Volver");
 		return sc.nextLine().charAt(0);
 	}
 
@@ -120,30 +121,35 @@ public class Main {
 	}
 	
 	// Switch que maneja la logica del segundo menú
-	static void logicaOpcion4(Tienda t) {
-		char menu;
+	static void logicaOpcion5(Tienda t, InfoTienda it) {
+		Scanner sc = new Scanner(System.in);
+		char menu, opc;
 		do {
-			menu = menuOpcion4();
+			it.obtenerProductos(t.getProductos());
+			menu = menuOpcion5();
 			switch (menu) {
 				case '1':
-					// Hacer que muestre lo de informacion detallada
-					t.mostrarInfoDetalladaProductos();
+					it.mostrarInfoDetalladaProductos(t.getProductos());
 					break;
 				case '2':
-					t.buscarProducto();
+					it.buscarProductoPorNombre(t.getProductos());
 					break;
 				case '3':
+					it.buscarProductoPorId(t.getProductos());
 					break;
 				case '4':
-					
+					it.buscarProductoCategoria(t.getProductos());
 					break;
 				case '5':
+					it.buscarProductoSubcategoria(t.getProductos());
+					break;
+				case '6':
 					System.out.println("Volviendo...");
 					break;
 				default:
 					System.out.println("Ingrese una opción válida");
 			}
-		} while (menu != '3');
+		} while (menu != '6');
 	}
 	
 }

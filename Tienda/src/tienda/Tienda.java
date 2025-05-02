@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Tienda {
+	private InfoTienda infoTienda;
 	private Connection conexion;
 	private double totalVenta = 0;
 	private ArrayList<Producto> productos = new ArrayList<Producto>();
@@ -43,11 +44,31 @@ public class Tienda {
 		this.totalVenta = totalVenta;
 	}
 
+	public InfoTienda getInfoTienda() {
+		return infoTienda;
+	}
+
+	public void setInfoTienda(InfoTienda infoTienda) {
+		this.infoTienda = infoTienda;
+	}
+
+	public ArrayList<Producto> getProductos() {
+		return productos;
+	}
+
+	public void setProductos(ArrayList<Producto> productos) {
+		this.productos = productos;
+	}
+
 	// --------------------- Métodos ---------------------
+	public void cargarProductos() {
+        infoTienda.obtenerProductos(productos);
+    }
+	
 	public void venderProducto() {
 		Scanner sc = new Scanner(System.in);
-		obtenerProductos(); // Se llama el método para que cargue los productos de la tabla
-		mostrarInfoProductos(); // Se llama a la función para mostrar los productos con su información
+		cargarProductos(); // Se llama el método para que cargue los productos de la tabla
+		infoTienda.mostrarInfoProductos(productos); // Se llama a la función para mostrar los productos con su información
 
 		System.out.println("\nIngrese el id del producto que quiere comprar");
 		int id = sc.nextInt();
@@ -94,11 +115,11 @@ public class Tienda {
 		int id = 0, subcategoria = 0, categoria = 0;
 		boolean categoriaValida = false, subcategoriaValida = false; // Por defecto son false para que entren en los bucles
 		String nombreSubcategoria = "";
-		obtenerProductos();
+		cargarProductos();
 
 		try {
 			System.out.println("Estos son los productos disponibles en este momento:");
-			mostrarInfoProductos(); // Muestra los productos disponibles
+			infoTienda.mostrarInfoProductos(productos); // Muestra los productos disponibles
 
 			// Pide la información del nuevo producto
 			System.out.println("Ingrese el nombre del nuevo producto");
@@ -273,78 +294,21 @@ public class Tienda {
 		}
 	}
 
-	public void buscarProducto() {
-		Scanner sc = new Scanner(System.in);
-		char opc;
-		int id = 0;
-		try {
-			do {
-				obtenerProductos(); // Llama al método para para cargar la lista de productos
-
-				System.out.println(" 1. Buscar por nombre\n 2. Buscar por ID\n 3. Volver");
-				opc = sc.nextLine().charAt(0);
-
-				switch (opc) {
-					case '1':
-						System.out.println("Ingrese el nombre del producto");
-						String nombre = sc.nextLine();
-	
-						String buscar = "SELECT id FROM productos WHERE nombre = ?"; // Busca solo el id que corresponda con el nombre ingresado
-						PreparedStatement ps = conexion.prepareStatement(buscar);
-						ps.setString(1, nombre);
-						ResultSet rs = ps.executeQuery();
-						
-						if (rs.next()) { // Si hay un id que concuerde con el nombre
-							id = rs.getInt(1); // Lo guarda en la variable id
-						}
-						
-						for(Producto p: productos) { // Itera el ArrayList de productos y si el id coincide muestra la información
-							if(p.getId() == id) {
-								p.mostrarInfoDetallada(0);
-							}
-						}
-						break;
-					case '2':
-						System.out.println("Ingrese el ID del producto");
-						id = sc.nextInt();
-						sc.nextLine();
-	
-						for (Producto p : productos) { // Itera sobre los productos y solo muestra la información del que coincida
-							if (p.getId() == id) {
-								p.mostrarInfoDetallada(0);
-							}
-						}
-						break;
-					case '3':
-						System.out.println("Volviendo...");
-						break;
-					default:
-						System.out.println("Opción inválida");
-				}
-			} while (opc != '3');
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	public void eliminarProducto() {
 		Scanner sc = new Scanner(System.in);
-		mostrarInfoProductos();
+		infoTienda.mostrarInfoProductos(productos);
 		System.out.println("Ingrese el id del producto que quiere eliminar");
 		int id = sc.nextInt();
 
 		try {
-			
 			/*
-			 * Verifica si el producto tiene alguna venta relacionada. Si tiene, no se
-			 * puede borrar porque la tabla de ventas tiene una clave foránea que apunta a
-			 * la tabla de productos. Entonces lo más sencillo es no dejar que lo elimine,
+			 * Verifica si el producto tiene alguna venta relacionada. Si tiene, no se puede
+			 * borrar porque la tabla de ventas tiene una clave foránea que apunta a la
+			 * tabla de productos. Entonces lo más sencillo es no dejar que lo elimine,
 			 * porque por otro lado se tendría que eliminar también la venta o editar la
 			 * tabla ventas
 			 */
-
+			
 			String contarVentas = "SELECT COUNT(*) FROM ventas WHERE producto_id = ?";
 			PreparedStatement psContar = conexion.prepareStatement(contarVentas);
 			psContar.setInt(1, id);
@@ -373,59 +337,6 @@ public class Tienda {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
-	public void mostrarInfoProductos() {
-	    obtenerProductos();
-
-	    System.out.println("  ╔═══════════════════════════════════╗");
-	    System.out.println("  ║           INSTRUMENTOS            ║");
-	    System.out.println("  ║           Y ACCESORIOS            ║");
-
-	    for (Producto p : productos) {
-	        p.mostrarInfo(1);
-	    }
-	    System.out.println("  ╚═══════════════════════════════════╝");
-	    
-	}
-
-	public void mostrarInfoDetalladaProductos() {
-		obtenerProductos();
-		System.out.println("  ╔═════════════════════════════════════════════");
-	    System.out.println("  ║           INFORMACIÓN DE LOS PRODUCTOS");
-	    for (Producto p : productos) {
-	        p.mostrarInfoDetallada(1);
-	    }
-	    System.out.println("  ╚═════════════════════════════════════════════");
-		
-	}
-
-	public void obtenerProductos() {
-		productos.clear(); // Es para evitar que se dupliquen los productos al llamar el método
-
-		try {
-			String consulta = "SELECT * FROM productos";
-			PreparedStatement ps = conexion.prepareStatement(consulta);
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-				Producto p = new Producto();
-
-				p.setId(rs.getInt("id"));
-				p.setNombre(rs.getString("nombre"));
-				p.setDescripcion(rs.getString("descripcion"));
-				p.setCategoriaId(rs.getInt("categoria_id"));
-				p.setSubcategoriaId(rs.getInt("subcategoria_id")); // rs.wasNull() si puede ser NULL
-				p.setPrecio(rs.getDouble("precio"));
-				p.setCantidad(rs.getInt("cantidad"));
-
-				productos.add(p);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
 }
