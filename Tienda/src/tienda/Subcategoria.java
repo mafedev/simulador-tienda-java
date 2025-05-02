@@ -46,13 +46,15 @@ public class Subcategoria {
 	}
 	
 	// --------------------- Métodos ---------------------
-	public static void mostrarSubcategorias(Connection c) {
+	public static void mostrarSubcategorias(Connection c, int categoriaId) {
 		try {
-			Statement s = c.createStatement();
-			ResultSet rs = s.executeQuery("SELECT * FROM subcategorias");
+			String consulta = "SELECT * FROM subcategorias WHERE categoria_id = ?";
+	        PreparedStatement ps = c.prepareStatement(consulta);
+	        ps.setInt(1, categoriaId);
+	        ResultSet rs = ps.executeQuery();
 
 			System.out.println("  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
-			System.out.println("  │ INSTRUMENTOS");
+			System.out.println("  │ SUBCATEGORÍAS");
 			while (rs.next()) {
 				System.out.println("  │   ID: " + rs.getString("id"));
 				System.out.println("  │     Nombre: " + rs.getString("nombre"));

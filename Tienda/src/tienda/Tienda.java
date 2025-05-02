@@ -91,7 +91,7 @@ public class Tienda {
 
 	public void agregarProducto() {
 		Scanner sc = new Scanner(System.in);
-		int id = 0, numSubcategoria = 0;
+		int id = 0, subcategoria = 0;
 		String nombreSubcategoria = "";
 		obtenerProductos();
 
@@ -118,18 +118,35 @@ public class Tienda {
 		        return;
 		    }
 			
-			// Selección de categoría			
-			Categoria.mostrarCategorias(conexion);
-			System.out.println("Ingrese el número de la categoría correspondiente, o ingrese 0 si desea crear una nueva categoría");
-			int categoria = sc.nextInt();
+			Categoria.mostrarCategorias(conexion); // Muestra las categorías existentes
+			
+			int categoria = 0;
+			boolean categoriaValida = false;
+
+			while (!categoriaValida) {
+				System.out.println("Ingrese el número de la categoría correspondiente, o ingrese 0 si desea crear una nueva categoría"); // Selecciona la categoría o la crea	
+				categoria = sc.nextInt();
+
+				// Verifica si la categoría ingresada es válida
+				String verificarCategoria = "SELECT id FROM categorias WHERE id = ?";
+				PreparedStatement psVerificar = conexion.prepareStatement(verificarCategoria);
+				psVerificar.setInt(1, categoria);
+				ResultSet rsVerificar = psVerificar.executeQuery();
+
+				if (rsVerificar.next() || categoria == 0) {
+					categoriaValida = true; // La categoría es válida
+				} else {
+					System.out.println("La categoría ingresada no es válida. Intente nuevamente.");
+				}
+
+			}
 
 			if (categoria == 0) { // Si ingresa un 0, se pide la información para crear la nueva categoría
 				System.out.println("Ingrese el nombre de la nueva categoría");
 				sc.nextLine();
 				String nombreCategoria = sc.nextLine();
 
-				// Comprueba si la categoría ya existe
-				String comprobarCategoria = "SELECT id FROM categorias WHERE nombre = ?";
+				String comprobarCategoria = "SELECT id FROM categorias WHERE nombre = ?"; // Se comprueba si la categoría ya existe buscando el nombre en la tabla
 				PreparedStatement ps = conexion.prepareStatement(comprobarCategoria);
 				ps.setString(1, nombreCategoria);
 				ResultSet rsCategoria = ps.executeQuery();
@@ -146,28 +163,50 @@ public class Tienda {
 					categoria = Categoria.encontrarIdMaximo(conexion); // Usa el método para obtener el id de la nueva categoría
 				}
 				
-				System.out.println("Ahora ingrese el nombre de la nueva subcategoria a la que pertenece, si no pertenece a ninguna ingrese null");
+				System.out.println("Ahora ingrese el nombre de la nueva subcategoria a la que pertenece, si no pertenece a ninguna ingrese null"); // Igual que antes, solo que si no pertenece a ninguna subcategoria se deja como null
 				nombreSubcategoria = sc.nextLine();
-				
-				String crearSubcategoria = "INSERT INTO subcategorias (nombre, categoria_id) VALUES (?, ?)";
-				PreparedStatement psSubcategoria = conexion.prepareStatement(crearSubcategoria);
-				psSubcategoria.setString(1, nombreSubcategoria);
-				psSubcategoria.setInt(2, categoria);
-				psSubcategoria.executeUpdate();
-				
-				Subcategoria.encontrarIdMaximo(conexion); // Usa el método para obtener el id de la nueva subcategoría
-				
-			} else {
-				// Muestra las subcategorías que hay
-				Subcategoria.mostrarSubcategorias(conexion);
-				System.out.println("Ahora ingrese si pertenece a alguna subcategoría, si no, ingrese 0");
-				numSubcategoria = sc.nextInt();
+
+				if (nombreSubcategoria.equalsIgnoreCase("null")) { // Si no tiene subcategoría, entonces el número de la subcategoría va a ser 0, para que luego al crear el producto inserte un null
+				    subcategoria = 0;
+				} else {
+				    String crearSubcategoria = "INSERT INTO subcategorias (nombre, categoria_id) VALUES (?, ?)";
+				    PreparedStatement psSubcategoria = conexion.prepareStatement(crearSubcategoria);
+				    psSubcategoria.setString(1, nombreSubcategoria);
+				    psSubcategoria.setInt(2, categoria);
+				    psSubcategoria.executeUpdate();
+
+				    subcategoria = Subcategoria.encontrarIdMaximo(conexion); // Obtiene el ID de la nueva subcategoría
+				}
+			} else { // Si seleccionó una categoría, muestra solo las subcategorías correspondientes a esa categoría
+			    Subcategoria.mostrarSubcategorias(conexion, categoria); // Muestra las subcategorías de la categoría seleccionada
+			    System.out.println("Ahora ingrese si pertenece a alguna subcategoría, si no, ingrese 0");
+
+			    boolean subcategoriaValida = false;
+			    while (!subcategoriaValida) {
+			        subcategoria = sc.nextInt();
+
+			        if (subcategoria == 0) { // Si el usuario ingresa 0, no pertenece a ninguna subcategoría
+			            subcategoriaValida = true;
+			        } else {
+			            // Verifica si la subcategoría ingresada pertenece a la categoría seleccionada
+			            String verificarSubcategoria = "SELECT id FROM subcategorias WHERE id = ? AND categoria_id = ?";
+			            try (PreparedStatement psVerificar = conexion.prepareStatement(verificarSubcategoria)) {
+			                psVerificar.setInt(1, subcategoria);
+			                psVerificar.setInt(2, categoria);
+			                ResultSet rsVerificar = psVerificar.executeQuery();
+
+			                if (rsVerificar.next()) {
+			                    subcategoriaValida = true; // La subcategoría es válida
+			                } else {
+			                    System.out.println("La subcategoría ingresada no es válida. Intente nuevamente.");
+			                }
+			            } catch (SQLException e) {
+			                e.printStackTrace();
+			            }
+			        }
+			    }
 			}
 
-			if(nombreSubcategoria.equalsIgnoreCase("null")) {
-				numSubcategoria = 0;
-			}
-			
 			// Solicita el precio y la cantidad
 			System.out.println("Ingrese el precio del articulo");
 			double precio = sc.nextDouble();
@@ -178,7 +217,7 @@ public class Tienda {
 			// Se inserta en la tabla productos el nuevo producto
 			Statement s = conexion.createStatement();
 			String fila = String.format("INSERT INTO productos (nombre, descripcion, categoria_id, subcategoria_id, precio, cantidad) VALUES ('%s', '%s', '%d', %s, '%f', '%d')",
-					nombre, descripcion, categoria, (numSubcategoria == 0 ? "NULL" : numSubcategoria), precio, cantidad); // Si la subcategoria es 0, es decir, no tiene subcategoría, inserta un null
+					nombre, descripcion, categoria, (subcategoria == 0 ? "NULL" : subcategoria), precio, cantidad); // Si la subcategoria es 0, es decir, no tiene subcategoría, inserta un null
 
 			int confirmar = s.executeUpdate(fila);
 
@@ -194,7 +233,6 @@ public class Tienda {
 	}
 
 	public void devolverProducto() {
-		// que compruebe que no esta roto o en mal estado
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Ingrese el id de la compra, se encuentra en la parte superior del ticket");
 		int ventaId = sc.nextInt();
