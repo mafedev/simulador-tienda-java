@@ -301,6 +301,7 @@ public class Tienda {
 
 	public void eliminarProducto() {
 		Scanner sc = new Scanner(System.in);
+		cargarProductos();
 		infoTienda.mostrarInfoProductos(productos);
 		System.out.println("Ingrese el id del producto que quiere eliminar");
 		int id = sc.nextInt();
@@ -322,7 +323,7 @@ public class Tienda {
 			if (rsContar.next()) {
 				int cantidadVentas = rsContar.getInt(1);
 				if (cantidadVentas > 0) {
-					System.out.println("No se puede eliminar el producto porque tiene ventas asociadas.");
+					System.out.println("No se puede eliminar el producto porque tiene ventas asociadas");
 					return;
 				}
 			}
