@@ -66,18 +66,17 @@ public class InfoTienda {
     // --------------------- Métodos para buscar ---------------------
 	public void buscarProductoPorNombre(ArrayList<Producto> productos) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Ingrese el nombre del producto:");
+		System.out.println("Ingrese el nombre del producto (con tíldes):");
 		String nombre = sc.nextLine();
 
-		// Busca en la lista de productos
-		for (Producto p : productos) {
+		for (Producto p : productos) { // Itera sobre la lista de productos
 			if (p.getNombre().equalsIgnoreCase(nombre)) {
+				System.out.println();
 				p.mostrarInfoDetallada(0); // Muestra la información detallada del producto
 				return;
 			}
 		}
-
-		System.out.println("Producto no encontrado.");
+		System.out.println("No se encontró el producto"); // Si no lo encuentra muestra el mensaje
 	}
 	
 	public void buscarProductoPorId(ArrayList<Producto> productos) {
@@ -85,45 +84,39 @@ public class InfoTienda {
 	    System.out.println("Ingrese el ID del producto:");
 	    int id = sc.nextInt();
 
-	    // Busca en la lista de productos
-	    for (Producto p : productos) {
+	    for (Producto p : productos) { // Itera sobre la lista de productos
 	        if (p.getId() == id) {
 	            p.mostrarInfoDetallada(0); // Muestra la información detallada del producto
-	            return;
+	            return; // Sale del método
 	        }
 	    }
-
-	    System.out.println("Producto no encontrado.");
+		System.out.println("No se encontró el producto"); // Si no lo encuentra muestra el mensaje
 	}
 
 	public void buscarProductoCategoria(ArrayList<Producto> productos) {
 	    Scanner sc = new Scanner(System.in);
 	    int id = 0;
-	    
 	    System.out.println("Ingrese el nombre de la categoría: ");
 	    String categoria = sc.nextLine();
 
 	    try {
-	        // Consulta para obtener el ID de la categoría según el nombre ingresado
-	        String consulta = "SELECT id FROM categorias WHERE nombre = ?";
+	        String consulta = "SELECT id FROM categorias WHERE nombre = ?"; // Si el nombre coincide selecciona el id
 	        PreparedStatement ps = conexion.prepareStatement(consulta);
 	        ps.setString(1, categoria);
 	        ResultSet rs = ps.executeQuery();
 
 	        if (rs.next()) {
-	            id = rs.getInt("id"); // Obtiene el ID de la categoría
+	            id = rs.getInt("id"); // Obtiene el id de la categoría, para luego buscar con ese id los productos que coincidan
 	        } else {
 	            System.out.println("Categoría no encontrada");
 	            return; // Sale del método si no se encuentra la categoría
 	        }
 
-	        // Busca productos que pertenezcan a la categoría con el ID obtenido
 	        for (Producto p : productos) {
-	            if (p.getCategoriaId() == id) {
-	                p.mostrarInfoDetallada(0); // Muestra la información detallada del producto
+	            if (p.getCategoriaId() == id) { // Itera sobre los productos y solo muestra la inforamción de los que coincidan con el número de la categoría
+	                p.mostrarInfoDetallada(0);
 	            }
 	        }
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
@@ -132,7 +125,6 @@ public class InfoTienda {
 	public void buscarProductoSubcategoria(ArrayList<Producto> productos) {
 		Scanner sc = new Scanner(System.in);
 	    int id = 0;
-	    
 	    System.out.println("Ingrese el nombre de la subcategoría: ");
 	    String subcategoria = sc.nextLine();
 
@@ -144,19 +136,17 @@ public class InfoTienda {
 	        ResultSet rs = ps.executeQuery();
 
 	        if (rs.next()) {
-	            id = rs.getInt("id"); // Obtiene el ID de la categoría
+	            id = rs.getInt("id"); // Obtiene el id de la subcategoría, para luego buscar los que coincidan
 	        } else {
 	            System.out.println("Subcategoría no encontrada");
-	            return; // Sale del método si no se encuentra la categoría
+	            return; // Sale del método si no la encuentra
 	        }
 
-	        // Busca productos que pertenezcan a la categoría con el ID obtenido
 	        for (Producto p : productos) {
 	            if (p.getSubcategoriaId() == id) {
-	                p.mostrarInfoDetallada(0); // Muestra la información detallada del producto
+	                p.mostrarInfoDetallada(0); // Itera sobre los productos y solo muestra la información de los que coincidan
 	            }
 	        }
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
