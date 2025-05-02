@@ -3,6 +3,7 @@ package tienda;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class Producto {
 	private int id;
@@ -106,7 +107,14 @@ public class Producto {
 	}
 
 	// Cuando hay una devolución, actualiza el stock sumando los productos devueltos
-	public static void actualizarStockDevolucion(Connection c, int cantidad, int productoId) {
+	public static void actualizarStock(Connection c) {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Ingrese el ID del producto");
+		int productoId = sc.nextInt();
+		
+		System.out.println("¿Cuántos va a agregar?");
+		int cantidad = sc.nextInt();
+		
 		try {
 			String actualizarStock = "UPDATE productos SET cantidad = cantidad + ? WHERE id = ?";
 			PreparedStatement psActualizar = c.prepareStatement(actualizarStock);
