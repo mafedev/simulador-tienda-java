@@ -10,7 +10,7 @@ public class Categoria {
 	private int id;
 	private String nombre;
 	
-	// Constructores
+	// --------------------- Constructores ---------------------
 	public Categoria() {}
 	
 	public Categoria(int id, String nombre) {
@@ -18,7 +18,7 @@ public class Categoria {
 		this.nombre = nombre;
 	}
 
-	// Getters y Setters
+	// --------------------- Getters y Setters ---------------------
 	public int getId() {
 		return id;
 	}
@@ -35,8 +35,8 @@ public class Categoria {
 		this.nombre = nombre;
 	}
 	
-	// Métodos
-	public static void mostrarCategorias(Connection c) {
+	// --------------------- Métodos ---------------------
+	public static void mostrarCategorias(Connection c) { // Recibe la conexión como parámetro para poder hacer la consulta, y es static para no tener que crear un objeto Categoria, sino simplemente llamar al método en Tienda
 		try {
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery("SELECT * FROM categorias");
@@ -55,7 +55,7 @@ public class Categoria {
 		}
 	}
 	
-	public static int encontrarIdMaximo(Connection c) {
+	public static int encontrarIdMaximo(Connection c) { // Igual que el método anterior, solo que este devuelve el id de la "última" categoría, por eso selecciona el mayor
 		int id = 0;
 		try {
 			String obtenerId = "SELECT MAX(id) FROM categorias"; // Se obtiene el último id en la tabla categorias para luego insertarlo en la tabla productos
@@ -66,18 +66,9 @@ public class Categoria {
 				id = rsUltimoId.getInt(1); // Obtiene el id más alto
 				System.out.println("La categoría se creó con éxito");
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return id;
 	}
-	
-	
-	// Mirar si se puede modificar el método para usarlo en tienda
-	public void mostrarInfo() {
-		
-	}
-	
-	
 }
