@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Subcategoria {
 	private int id;
@@ -45,10 +44,29 @@ public class Subcategoria {
 		this.categoria = categoria;
 	}
 	
-	// --------------------- Métodos ---------------------
-	public static void mostrarSubcategorias(Connection c, int categoriaId) {
+	// --------------------- Métodos ---------------------	
+	public static int encontrarIdMaximo(Connection c) {
+		int id = 0;
 		try {
-			String consulta = "SELECT * FROM subcategorias WHERE categoria_id = ?";
+			String obtenerId = "SELECT MAX(id) FROM subcategorias"; // Obtiene el ùltimo id o el id mayor, de la tabla, para luego poder usarlo en Tienda en el método de agregarProducto
+			PreparedStatement psId = c.prepareStatement(obtenerId);
+			ResultSet rsUltimoId = psId.executeQuery();
+			
+			if (rsUltimoId.next()) {
+				id = rsUltimoId.getInt(1); // Obtiene solo el mayor id
+				System.out.println("La subcategoría se creó con éxito");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return id;
+	}
+
+	public static void mostrarSubcategorias(Connection c, int categoriaId) { // Al igual que en Categoria, el método también es static para no tener que crear un objeto
+		try {
+			String consulta = "SELECT * FROM subcategorias WHERE categoria_id = ?"; // Busca las subcategorías asociadas a la categoria
 	        PreparedStatement ps = c.prepareStatement(consulta);
 	        ps.setInt(1, categoriaId);
 	        ResultSet rs = ps.executeQuery();
@@ -67,29 +85,4 @@ public class Subcategoria {
 			e.printStackTrace();
 		}
 	}
-	
-	public static int encontrarIdMaximo(Connection c) {
-		int id = 0;
-		try {
-			String obtenerId = "SELECT MAX(id) FROM subcategorias";
-			PreparedStatement psId = c.prepareStatement(obtenerId);
-			ResultSet rsUltimoId = psId.executeQuery();
-			
-			if (rsUltimoId.next()) {
-				id = rsUltimoId.getInt(1); // Obtiene solo el mayor id
-				System.out.println("La subcategoría se creó con éxito");
-			}
-			
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return id;
-	}
-
-	
-	public void mostrarInfo() {
-		
-	}
-	
 }
