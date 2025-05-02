@@ -66,6 +66,26 @@ public class Subcategoria {
 		}
 	}
 	
+	public static int encontrarIdMaximo(Connection c) {
+		int id = 0;
+		try {
+			String obtenerId = "SELECT MAX(id) FROM subcategorias";
+			PreparedStatement psId = c.prepareStatement(obtenerId);
+			ResultSet rsUltimoId = psId.executeQuery();
+			
+			if (rsUltimoId.next()) {
+				id = rsUltimoId.getInt(1); // Obtiene solo el mayor id
+				System.out.println("La subcategoría se creó con éxito");
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
+
+	
 	public void mostrarInfo() {
 		
 	}

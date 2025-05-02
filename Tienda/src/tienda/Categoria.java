@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 public class Categoria {
 	private int id;
@@ -54,8 +55,29 @@ public class Categoria {
 		}
 	}
 	
+	public static int encontrarIdMaximo(Connection c) {
+		int id = 0;
+		try {
+			String obtenerId = "SELECT MAX(id) FROM categorias"; // Se obtiene el último id en la tabla categorias para luego insertarlo en la tabla productos
+			PreparedStatement psId = c.prepareStatement(obtenerId);
+			ResultSet rsUltimoId = psId.executeQuery();
+			
+			if (rsUltimoId.next()) {
+				id = rsUltimoId.getInt(1); // Obtiene el id más alto
+				System.out.println("La categoría se creó con éxito");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
+	
 	// Mirar si se puede modificar el método para usarlo en tienda
 	public void mostrarInfo() {
 		
 	}
+	
+	
 }

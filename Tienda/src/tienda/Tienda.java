@@ -47,7 +47,6 @@ public class Tienda {
 	public void venderProducto() {
 		Scanner sc = new Scanner(System.in);
 		obtenerProductos(); // Se llama el método para que cargue los productos de la tabla
-
 		mostrarInfoProductos(); // Se llama a la función para mostrar los productos con su información
 
 		System.out.println("\nIngrese el id del producto que quiere comprar");
@@ -55,8 +54,7 @@ public class Tienda {
 
 		for (Producto p : productos) {
 			if (p.getId() == id) {
-				// Muestra la información del producto si coincide con el id
-				p.mostrarInfoDetallada(0);
+				p.mostrarInfoDetallada(0); // Muestra la información del producto si coincide con el id
 
 				if (p.getCantidad() > 0) { // Verifica si hay productos disponibles
 					boolean valido = true;
@@ -64,34 +62,26 @@ public class Tienda {
 					System.out.println("¿Cuántos quiere comprar?");
 					int cantidad = sc.nextInt();
 
-					// Comprueba la cantidad sea válida
-					if (cantidad <= 0 || cantidad > p.getCantidad()) {
+					if (cantidad <= 0 || cantidad > p.getCantidad()) { // Comprueba que la cantidad sea válida
 						valido = false;
 					}
 
-					while (!valido) { // Si la cantidad introducida es inválida, entonces entra en el bucle hasta que ingrese una cantidad válida
+					while (!valido) { // Si la cantidad introducida es inválida, entra en el bucle hasta que ingrese una cantidad válida
 						System.out.println("Ingrese una cantidad válida");
 						cantidad = sc.nextInt();
-
-						if (cantidad <= 0 || cantidad > p.getCantidad()) { // Comprueba la cantidad hasta que sea válida
-							valido = false;
-						} else {
-							valido = true;
-						}
+						
+						valido = (cantidad <= 0 || cantidad > p.getCantidad()) ? false : true; // Comprueba la cantidad hasta que sea válida
 					}
 
-					// Se calcula el total de la compra
-					this.totalVenta = p.getPrecio() * cantidad;
+					this.totalVenta = p.getPrecio() * cantidad; // Se calcula el total de la compra
 
 					// Luego se inserta dentro de la tabla ventas
 					Venta v = new Venta();
 					v.registrarVenta(conexion, id, cantidad, totalVenta); // Se registra la compra llamando al método
 
-					// Muestra el recibo de compra
-					v.mostrarTicket(conexion, p, totalVenta, cantidad);
-
-					// Descuenta del stock los productos comprados
-					p.actualizarStockCompra(conexion, cantidad, id);
+					v.mostrarTicket(conexion, p, totalVenta, cantidad); // Muestra el recibo de compra
+					
+					p.actualizarStockCompra(conexion, cantidad, id); // Descuenta del stock los productos comprados
 				} else {
 					System.out.println("Lo sentimos, no se puede realizar la compra, no hay productos disponibles"); // Si la cantidad es 0, no se puede realizar la compra
 				}
@@ -101,16 +91,16 @@ public class Tienda {
 
 	public void agregarProducto() {
 		Scanner sc = new Scanner(System.in);
-		obtenerProductos();
 		int id = 0, numSubcategoria = 0;
 		String nombreSubcategoria = "";
+		obtenerProductos();
 
 		try {
 			// Muestra los productos disponibles
-			System.out.println("Los productos disponibles son:");
+			System.out.println("Estos son los productos disponibles en este momento:");
 			mostrarInfoProductos();
 
-			// Información del producto nuevo
+			// Pide la información del nuevo producto
 			System.out.println("Ingrese el nombre del nuevo producto");
 			String nombre = sc.nextLine();
 
@@ -130,7 +120,7 @@ public class Tienda {
 			int categoria = sc.nextInt();
 
 			if (categoria == 0) { // Si ingresa un 0, se pide la información para crear la nueva categoría
-				System.out.println("Ingrese el nombre de la categoría");
+				System.out.println("Ingrese el nombre de la nueva categoría");
 				sc.nextLine();
 				String nombreCategoria = sc.nextLine();
 
@@ -143,27 +133,25 @@ public class Tienda {
 				if (rsCategoria.next()) { // Si la categoría existe, asigna el id de esa categoría
 					categoria = rsCategoria.getInt("id");
 					System.out.println("La categoría ya existe, se va a asignar el id correspondiente");
-				} else {
-					// Si no existe, se crea la nueva categoría insertandola en la tabla
+				} else { // Si no existe, se crea la nueva categoría insertandola en la tabla
 					String crearCategoria = "INSERT INTO categorias (nombre) VALUES (?)";
 					PreparedStatement psCategoria = conexion.prepareStatement(crearCategoria);
 					psCategoria.setString(1, nombreCategoria);
 					psCategoria.executeUpdate();
 
-					// Se obtiene el último id en la tabla categorias para luego insertarlo en la tabla productos
-					String obtenerId = "SELECT MAX(id) FROM categorias";
-					PreparedStatement psId = conexion.prepareStatement(obtenerId);
-					ResultSet rsUltimoId = psId.executeQuery();
-
-					if (rsUltimoId.next()) {
-						categoria = rsUltimoId.getInt(1); // Obtiene solo el mayor id
-						System.out.println("La categoría se creó con éxito");
-					}
+					categoria = Categoria.encontrarIdMaximo(conexion); // Usa el método para obtener el id de la nueva categoría
 				}
 				
-				System.out.println("Ahora ingrese el nombre de la subcategoria a la que pertenece, si no pertenece a ninguna ingrese null");
+				System.out.println("Ahora ingrese el nombre de la nueva subcategoria a la que pertenece, si no pertenece a ninguna ingrese null");
 				nombreSubcategoria = sc.nextLine();
 				
+				String crearSubcategoria = "INSERT INTO subcategorias (nombre, categoria_id) VALUES (?, ?)";
+				PreparedStatement psSubcategoria = conexion.prepareStatement(crearSubcategoria);
+				psSubcategoria.setString(1, nombreSubcategoria);
+				psSubcategoria.setInt(2, categoria);
+				psSubcategoria.executeUpdate();
+				
+				Subcategoria.encontrarIdMaximo(conexion); // Usa el método para obtener el id de la nueva subcategoría
 				
 			} else {
 				// Muestra las subcategorías que hay
@@ -204,11 +192,10 @@ public class Tienda {
 	public void devolverProducto() {
 		// que compruebe que no esta roto o en mal estado
 		Scanner sc = new Scanner(System.in);
-
 		System.out.println("Ingrese el id de la compra, se encuentra en la parte superior del ticket");
 		int ventaId = sc.nextInt();
-
 		sc.nextLine();
+		
 		System.out.println("Indique el motivo de la devolución:");
 		String motivo = sc.nextLine();
 
@@ -239,9 +226,6 @@ public class Tienda {
 					productoId = rsId.getInt("producto_id");
 					// Se inserta la devolución en la tabla devoluciones
 					Devolucion.registrarDevolucion(conexion, ventaId, productoId, motivo, dineroDevuelto);
-
-					// Y se "actualiza" el stock con los productos devueltos
-					Producto.actualizarStockDevolucion(conexion, cantidadProductos, productoId);
 
 					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
 					Venta v = new Venta();
@@ -319,6 +303,7 @@ public class Tienda {
 
 	public void eliminarProducto() {
 		Scanner sc = new Scanner(System.in);
+		mostrarInfoProductos();
 		System.out.println("Ingrese el id del producto que quiere eliminar");
 		int id = sc.nextInt();
 
