@@ -28,7 +28,7 @@ public class Main {
 						t.venderProducto();
 						break;
 					case '2':
-						t.agregarProducto();
+						logicaOpcion2(t);
 						break;
 					case '3':
 						t.devolverProducto();
@@ -37,7 +37,7 @@ public class Main {
 						t.eliminarProducto();
 						break;
 					case '5':
-						logicaMenuSecundario(t);
+						logicaOpcion4(t);
 						break;
 					case '6':
 						Venta.mostrarVentas(c);
@@ -78,22 +78,52 @@ public class Main {
 	// Menú principal
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Añadir producto\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Total de ventas\n  9. Salir");
+		System.out.println("\n Ingrese una opción\n  1. Comprar producto\n  2. Actualizar inventario\n  3. Devolver producto\n  4. Eliminar Producto\n  5. Ver información de los productos\n  6. Ver ventas\n  7. Ver devoluciones\n  8. Total de ventas\n  9. Salir");
 		return sc.nextLine().charAt(0);
 	}
 
-	// Menú secundario para ver la información en la opción 4
-	static char menuSecundario() {
+	// Menú secundario para la opción 2
+	static char menuOpcion2() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Volver");
+		System.out.println("\n 1. Agregar nuevo producto\n 2. Actualizar stock de producto un existente\n 3. Modificar precio de un producto\n 4. Salir ");
+		return sc.nextLine().charAt(0);
+	}
+	
+	// Menú secundario para ver la información en la opción 4
+	static char menuOpcion4() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println(" Seleccione que información quiere ver\n  1. Ver información detallada de todos los productos\n  2. Buscar producto por nombre o ID\n  3. Buscar por categoria\n  4. Busca por subcategoría\n  5. Volver");
 		return sc.nextLine().charAt(0);
 	}
 
+	static void logicaOpcion2(Tienda t) {
+		char opc;
+		do {
+			opc = menuOpcion2();
+			switch(opc) {
+				case '1':
+					t.agregarProducto();
+					break;
+				case '2':
+					t.mostrarInfoProductos();
+					Producto.actualizarStock(t.getConexion());
+					break;
+				case '3':
+					
+					break;
+				case '4':
+					System.out.println("Volviendo...");
+					break;
+				default:
+			}
+		} while (opc != '4');
+	}
+	
 	// Switch que maneja la logica del segundo menú
-	static void logicaMenuSecundario(Tienda t) {
+	static void logicaOpcion4(Tienda t) {
 		char menu;
 		do {
-			menu = menuSecundario();
+			menu = menuOpcion4();
 			switch (menu) {
 				case '1':
 					// Hacer que muestre lo de informacion detallada
@@ -103,6 +133,11 @@ public class Main {
 					t.buscarProducto();
 					break;
 				case '3':
+					break;
+				case '4':
+					
+					break;
+				case '5':
 					System.out.println("Volviendo...");
 					break;
 				default:
