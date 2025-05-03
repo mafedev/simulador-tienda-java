@@ -8,15 +8,21 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 public class Main {
-
-	static String url = "jdbc:mysql://localhost:3306/tienda";
-
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		char opc;
-		System.out.println("\nBIENVENID@");
+		// Mensaje de bienvenida
+		System.out.println(""
+				+ "\r\n"
+				+ "  __ )  _)                                 _)      |        \r\n"
+				+ "  __ \\   |   _ \\  __ \\ \\ \\   /  _ \\  __ \\   |   _` |   _ \\  \r\n"
+				+ "  |   |  |   __/  |   | \\ \\ /   __/  |   |  |  (   |  (   | \r\n"
+				+ " ____/  _| \\___| _|  _|  \\_/  \\___| _|  _| _| \\__,_| \\___/ ");
+		System.out.println("\n¡Explora nuestra tienda y encuentra instrumentos musicales, accesorios y productos relacionados!");
+		
 		try {
-			Connection c = DriverManager.getConnection(url, "root", "root");
+			Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tienda", "root", "root");
 			Tienda t = new Tienda(c); // Se crea una tienda con una conexión para no abrir varias conexiones
 			InfoTienda it = new InfoTienda(c);
 
@@ -60,7 +66,7 @@ public class Main {
 	static char menuPrincipal() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\n   ╭────────────────────────────────────────╮");
-		System.out.println("      Ingrese una opción\n        1. Comprar producto\n        2. Actualizar inventario\n        3. Devolver producto\n        4. Eliminar Producto\n        5. Ver información de los productos\n        6. Informe de ventas\n        7. Salir");
+		System.out.println("      Ingrese una opción\n        1. Comprar producto\n        2. Actualizar inventario\n        3. Devolver producto\n        4. Eliminar producto\n        5. Ver información de los productos\n        6. Informe de ventas\n        7. Salir");
 		System.out.println("   ╰────────────────────────────────────────╯");
 		System.out.print("⏵"); 
 		return sc.nextLine().charAt(0);
@@ -118,6 +124,7 @@ public class Main {
 					System.out.println("Volviendo...");
 					break;
 				default:
+					System.out.println("Ingrese una opción válida");
 			}
 		} while (opc != '4');
 	}
@@ -159,37 +166,37 @@ public class Main {
 		char opc;
 		do {
 			opc = menuOpcion6();
-			switch(opc) {
-				case '1':
-					Venta.mostrarVentas(c); // Llama al método correspondiente
-					break;
-				case '2':
-					Devolucion.mostrarDevoluciones(c); // Llama al método correspondiente
-					break;
-				case '3':
-					try {
-						// Suma el total de la tabla ventas solo si no tiene devoluciones registradas, es decir, si devuelto es false
-						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas WHERE devuelto = false";
-						Statement suma = c.createStatement();
-						ResultSet rs = suma.executeQuery(sumaVentas);
-						
-						if (rs.next()) {
-							double totalVentas = rs.getDouble("totalVentas");
-							System.out.println("El total acumulado en caja es: " + totalVentas + " €");
-						} else {
-							System.out.println("No hay ventas registradas");
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
+			switch (opc) {
+			case '1':
+				Venta.mostrarVentas(c); // Llama al método correspondiente
+				break;
+			case '2':
+				Devolucion.mostrarDevoluciones(c); // Llama al método correspondiente
+				break;
+			case '3':
+				try {
+					// Suma el total de la tabla ventas solo si no tiene devoluciones registradas, es decir, si devuelto es false
+					String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas WHERE devuelto = false";
+					Statement suma = c.createStatement();
+					ResultSet rs = suma.executeQuery(sumaVentas);
+
+					if (rs.next()) {
+						double totalVentas = rs.getDouble("totalVentas");
+						System.out.println("\nEl total acumulado en caja es: " + totalVentas + " €");
+						System.out.println("Recuerde que este total se calcula sin tener en cuenta las devoluciones");
+					} else {
+						System.out.println("No hay ventas registradas");
 					}
-					break;
-				case '4':
-					System.out.println("Volviendo...");
-					break;
-				default:
-					System.out.println("Ingrese una opción válida");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				break;
+			case '4':
+				System.out.println("Volviendo...");
+				break;
+			default:
+				System.out.println("Ingrese una opción válida");
 			}
-		}while(opc != '4');
-			
+		} while (opc != '4');
 	}
 }
