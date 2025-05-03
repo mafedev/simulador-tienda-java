@@ -168,7 +168,8 @@ public class Main {
 					break;
 				case '3':
 					try {
-						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas"; // Hace una suma de los totales de todas la ventas para mostrar cuánto dinero hay hasta el momento
+						// Suma el total de la tabla ventas solo si no tiene devoluciones registradas, es decir, si devuelto es false
+						String sumaVentas = "SELECT SUM(total) AS totalVentas FROM ventas WHERE devuelto = false";
 						Statement suma = c.createStatement();
 						ResultSet rs = suma.executeQuery(sumaVentas);
 						
