@@ -10,60 +10,24 @@ import java.util.Scanner;
 public class InfoTienda {
     private Connection conexion;
 
+	// --------------------- Constructores ---------------------
     public InfoTienda() {}
 
     public InfoTienda(Connection conexion) {
         this.conexion = conexion;
     }
 
-    public void mostrarInfoProductos(ArrayList<Producto> productos) {
-        System.out.println("  ╔═══════════════════════════════════╗");
-        System.out.println("  ║           INSTRUMENTOS            ║");
-        System.out.println("  ║           Y ACCESORIOS            ║");
-
-        for (Producto p : productos) {
-            p.mostrarInfo(1);
-        }
-        System.out.println("  ╚═══════════════════════════════════╝");
+	// --------------------- Getters y Setters ---------------------
+    public Connection getConexion() {
+    	return conexion;
     }
-
-    public void mostrarInfoDetalladaProductos(ArrayList<Producto> productos) {
-        System.out.println("  ╔═════════════════════════════════════════════");
-        System.out.println("  ║           INFORMACIÓN DE LOS PRODUCTOS");
-        for (Producto p : productos) {
-            p.mostrarInfoDetallada(1);
-        }
-        System.out.println("  ╚═════════════════════════════════════════════");
+    
+    public void setConexion(Connection conexion) {
+    	this.conexion = conexion;
     }
-
-    public void obtenerProductos(ArrayList<Producto> productos) {
-        productos.clear(); // Es para evitar que se dupliquen los productos al llamar el método
-
-        try {
-            String consulta = "SELECT * FROM productos";
-            PreparedStatement ps = conexion.prepareStatement(consulta);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Producto p = new Producto();
-
-                p.setId(rs.getInt("id"));
-                p.setNombre(rs.getString("nombre"));
-                p.setDescripcion(rs.getString("descripcion"));
-                p.setCategoriaId(rs.getInt("categoria_id"));
-                p.setSubcategoriaId(rs.getInt("subcategoria_id")); // rs.wasNull() si puede ser NULL
-                p.setPrecio(rs.getDouble("precio"));
-                p.setCantidad(rs.getInt("cantidad"));
-
-                productos.add(p);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    
     // --------------------- Métodos para buscar ---------------------
+    // Busca el prodcuto por el nombre en el arrayList productos
 	public void buscarProductoPorNombre(ArrayList<Producto> productos) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Ingrese el nombre del producto (con tíldes):");
@@ -79,6 +43,7 @@ public class InfoTienda {
 		System.out.println("No se encontró el producto"); // Si no lo encuentra muestra el mensaje
 	}
 	
+    // Busca el producto por el ID en el arrayList productos
 	public void buscarProductoPorId(ArrayList<Producto> productos) {
 		Scanner sc = new Scanner(System.in);
 	    System.out.println("Ingrese el ID del producto:");
@@ -93,6 +58,7 @@ public class InfoTienda {
 		System.out.println("No se encontró el producto"); // Si no lo encuentra muestra el mensaje
 	}
 
+	// Busca los productos por el número de la categoría en el arrayList productos
 	public void buscarProductoCategoria(ArrayList<Producto> productos) {
 	    Scanner sc = new Scanner(System.in);
 	    int id = 0;
@@ -112,16 +78,21 @@ public class InfoTienda {
 	            return; // Sale del método si no se encuentra la categoría
 	        }
 
+	        System.out.println("\n  ╔══════════════════════════════════════════════════════");
+	        System.out.println("  ║           PRODUCTOS QUE COINCIDEN:");
 	        for (Producto p : productos) {
 	            if (p.getCategoriaId() == id) { // Itera sobre los productos y solo muestra la inforamción de los que coincidan con el número de la categoría
-	                p.mostrarInfoDetallada(0);
+	                p.mostrarInfoDetallada(1);
 	            }
 	        }
+	        System.out.println("  ╚══════════════════════════════════════════════════════");
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	}
 	
+	// Busca los productos por el número de la subcategoría en el arrayList productos
 	public void buscarProductoSubcategoria(ArrayList<Producto> productos) {
 		Scanner sc = new Scanner(System.in);
 	    int id = 0;
@@ -129,7 +100,6 @@ public class InfoTienda {
 	    String subcategoria = sc.nextLine();
 
 	    try {
-	        // Consulta para obtener el ID de la categoría según el nombre ingresado
 	        String consulta = "SELECT id FROM subcategorias WHERE nombre = ?";
 	        PreparedStatement ps = conexion.prepareStatement(consulta);
 	        ps.setString(1, subcategoria);
@@ -142,13 +112,67 @@ public class InfoTienda {
 	            return; // Sale del método si no la encuentra
 	        }
 
+	        System.out.println("\n  ╔══════════════════════════════════════════════════════");
+	        System.out.println("  ║           PRODUCTOS QUE COINCIDEN:");
 	        for (Producto p : productos) {
 	            if (p.getSubcategoriaId() == id) {
-	                p.mostrarInfoDetallada(0); // Itera sobre los productos y solo muestra la información de los que coincidan
+	                p.mostrarInfoDetallada(1); // Itera sobre los productos y solo muestra la información de los que coincidan
 	            }
 	        }
+	        System.out.println("  ╚══════════════════════════════════════════════════════");
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
+	}
+	
+	// --------------------- Métodos para mostrar información ---------------------
+	// Muestra la inforamción como el nombre y precio de los productos
+	public void mostrarInfoProductos(ArrayList<Producto> productos) {
+		System.out.println("\n  ╔═══════════════════════════════════╗");
+		System.out.println("  ║           INSTRUMENTOS            ║");
+		System.out.println("  ║           Y ACCESORIOS            ║");
+
+		for (Producto p : productos) {
+			p.mostrarInfo(1);
+		}
+		System.out.println("  ╚═══════════════════════════════════╝");
+	}
+
+	// Muestra la información de los productos pero más detallada, como la descripción
+	public void mostrarInfoDetalladaProductos(ArrayList<Producto> productos) {
+		System.out.println("  ╔═════════════════════════════════════════════");
+		System.out.println("  ║           INFORMACIÓN DE LOS PRODUCTOS");
+		for (Producto p : productos) {
+			p.mostrarInfoDetallada(1);
+		}
+		System.out.println("  ╚═════════════════════════════════════════════");
+	}
+
+	// Carga los productos de la tabla productos al arrayList productos
+	public void obtenerProductos(ArrayList<Producto> productos) {
+		productos.clear(); // Limpia la lista 'productos' para evitar que se dupliquen los productos al llamar el método
+		
+		try {
+			String consulta = "SELECT * FROM productos";
+			PreparedStatement ps = conexion.prepareStatement(consulta);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Producto p = new Producto(); // Crea un nuevo producto en cada iteración y se asigna los valores con los setters
+
+				p.setId(rs.getInt("id"));
+				p.setNombre(rs.getString("nombre"));
+				p.setDescripcion(rs.getString("descripcion"));
+				p.setCategoriaId(rs.getInt("categoria_id"));
+				p.setSubcategoriaId(rs.getInt("subcategoria_id"));
+				p.setPrecio(rs.getDouble("precio"));
+				p.setCantidad(rs.getInt("cantidad"));
+
+				productos.add(p); // Agrega el producto al arraylist
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
