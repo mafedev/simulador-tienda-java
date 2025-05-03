@@ -115,8 +115,9 @@ public class Tienda {
 
 	public void agregarProducto() {
 		Scanner sc = new Scanner(System.in);
-		int id = 0, subcategoria = 0, categoria = 0;
-		boolean categoriaValida = false, subcategoriaValida = false; // Por defecto son false para que entren en los bucles
+		int id = 0, subcategoria = 0, categoria = 0, cantidad = 0;
+		boolean categoriaValida = false, subcategoriaValida = false, precioValido = false, cantidadValida = false; // Por defecto son false para que entren en los bucles
+		double precio = 0;
 		String nombreSubcategoria = "";
 		cargarProductos();
 
@@ -156,7 +157,7 @@ public class Tienda {
 				if (rsVerificar.next() || categoria == 0) { // Si hay un resultado o se ingresa cero, se toma como válido
 					categoriaValida = true;
 				} else {
-					System.out.println("La categoría ingresada no es válida. Intente nuevamente.");
+					System.out.println("    ⚠ La categoría ingresada no es válida, inténtelo nuevamente");
 				}
 			}
 
@@ -172,7 +173,7 @@ public class Tienda {
 
 				if (rsCategoria.next()) { // Si la categoría existe, asigna el id de esa categoría
 					categoria = rsCategoria.getInt("id");
-					System.out.println("La categoría ya existe, se va a asignar el id correspondiente");
+					System.out.println("\nLa categoría ya existe, se va a asignar el id correspondiente");
 				} else { // Si no existe, se crea la nueva categoría insertandola en la tabla
 					String crearCategoria = "INSERT INTO categorias (nombre) VALUES (?)";
 					PreparedStatement psCategoria = conexion.prepareStatement(crearCategoria);
@@ -212,7 +213,7 @@ public class Tienda {
 						if (rsVerificar.next() || subcategoria == 0) { // Si hay resultado o ingreso un 0, la subcategoría es válida
 							subcategoriaValida = true;
 						} else {
-							System.out.println("La subcategoría ingresada no es válida. Intente nuevamente.");
+							System.out.println("    ⚠ La subcategoría ingresada no es válida, inténtelo nuevamente");
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();
@@ -220,12 +221,37 @@ public class Tienda {
 				}
 			}
 			// Solicita el precio y la cantidad
-			System.out.println("Ingrese el precio del articulo");
-			double precio = sc.nextDouble();
-
-			System.out.println("Ingrese la cantidad de articulos");
-			int cantidad = sc.nextInt();
-
+			while(!precioValido || !cantidadValida) {
+				
+				if(!precioValido && !cantidadValida) {
+					System.out.println("\nIngrese el precio del articulo");
+					precio = sc.nextDouble();
+					
+					System.out.println("\nIngrese la cantidad de articulos");
+					cantidad = sc.nextInt();
+					
+				} else if (!precioValido && cantidadValida) {
+					System.out.println("\nIngrese el precio del articulo");
+					precio = sc.nextDouble();
+				} else if(precioValido && !cantidadValida) {
+					System.out.println("\nIngrese la cantidad de articulos");
+					cantidad = sc.nextInt();
+				}
+				
+				if (precio > 0 && cantidad <= 0) {
+					System.out.println("    ⚠ La cantidad ingresada no es válida, inténtelo nuevamente");
+					precioValido = true;
+				} else if (precio <= 0 && cantidad > 0) {
+					System.out.println("    ⚠  El precio ingresado no es válido, inténtelo nuevamente");
+					cantidadValida = true;
+				} else if (precio <= 0 || cantidad <= 0) {
+					System.out.println("    ⚠ El precio y cantidad ingresados no son válidos, inténtelo nuevamente");
+				} else if (precio > 0 && cantidad > 0) {
+					precioValido = true;
+					cantidadValida = true;
+				}
+			}
+			
 			// Se inserta en la tabla productos el nuevo producto
 			Statement s = conexion.createStatement();
 			String fila = String.format("INSERT INTO productos (nombre, descripcion, categoria_id, subcategoria_id, precio, cantidad) VALUES ('%s', '%s', '%d', %s, '%f', '%d')",
