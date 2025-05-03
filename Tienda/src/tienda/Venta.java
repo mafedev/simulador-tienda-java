@@ -126,6 +126,7 @@ public class Venta {
 		}
 	}
 	
+	// Muestra un ticket con la información de la compra
 	public void mostrarTicket(Connection c, Producto p, double total, int cantidad) {
 		int id = 0;
 		try {
@@ -141,24 +142,25 @@ public class Venta {
 			e.printStackTrace();
 		}
 
-		// Se muestra la descripción de la compra
+		// Se muestra la descripción de la compra, el "id compra", es el id de la tabla ventas, que se utiliza en caso de hacer una devolución
 		System.out.println("\n"
 				+ "      𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃 \r\n"
-				+ "     │                                  Id compra: " + id + "    |\r\n"
+				+ "     │                                  Id compra: " + id + "\r\n"
 				+ "     │                                                  |\r\n"
 				+ "     │       @                                          |\r\n"
 				+ "     │     @@@@@      Producto: " + p.getNombre() +"\r\n"
 				+ "     │    @  @        Precio c/u: " + p.getPrecio()+ " €\r\n"
-				+ "     │     @@@@       Cantidad: " + cantidad + "\r\n"
+				+ "     │     @@@@       Unidades: " + cantidad + "\r\n"
 				+ "     │       @ @@                                       |\r\n"
 				+ "     │       @  @                                       |\r\n"
 				+ "     │    @@@@@@                      Total: " + total + " €\r\n"
-				+ "     │       @                                          |\r\n"
+				+ "     │       @                          IVA Incluido    |\r\n"
 				+ "     │                                                  |\r\n"
 				+ "     |𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃|\r\n");
 		
 	}
 	
+	// Muestra la información de una venta en específico
 	public void mostrarInfoVentaId(Connection c, int id) {
 		try {
 			String venta = "SELECT * FROM ventas WHERE id = ?"; // Selecciona la venta con el id que se le pasa como parámetro
