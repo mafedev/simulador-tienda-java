@@ -109,8 +109,10 @@ public class Tienda {
 				} else {
 					System.out.println("Lo sentimos, no se puede realizar la compra, no hay productos disponibles"); // Si la cantidad es 0, no se puede realizar la compra
 				}
+				return; // Sale del método luego de encontrar el producto y hacer la venta
 			}
 		}
+		System.out.println("No se encontro el producto"); // Si después de recorren el ArrayList de productos no lo encuentra, entonces muestra el mensaje
 	}
 
 	public void agregarProducto() {
@@ -119,7 +121,7 @@ public class Tienda {
 		boolean categoriaValida = false, subcategoriaValida = false, precioValido = false, cantidadValida = false; // Por defecto son false para que entren en los bucles
 		double precio = 0;
 		String nombreSubcategoria = "";
-		cargarProductos();
+		cargarProductos(); // Carga el arraylist productos
 
 		try {
 			System.out.println("Estos son los productos disponibles en este momento:");
@@ -183,7 +185,7 @@ public class Tienda {
 					categoria = Categoria.encontrarIdMaximo(conexion); // Usa el método para obtener el id de la nueva categoría
 				}
 				
-				System.out.println("Ahora ingrese el nombre de la nueva subcategoria a la que pertenece, si no pertenece a ninguna ingrese null"); // Igual que antes, solo que si no pertenece a ninguna subcategoria se deja como null
+				System.out.println("\nAhora ingrese el nombre de la nueva subcategoria a la que pertenece, si no pertenece a ninguna ingrese null"); // Igual que antes, solo que si no pertenece a ninguna subcategoria se deja como null
 				nombreSubcategoria = sc.nextLine();
 
 				if (nombreSubcategoria.equalsIgnoreCase("null")) { // Si no tiene subcategoría, entonces el número de la subcategoría va a ser 0, para que luego al insertar el producto en la tabla se inserte un null
@@ -221,23 +223,23 @@ public class Tienda {
 				}
 			}
 			// Solicita el precio y la cantidad
-			while(!precioValido || !cantidadValida) {
-				
-				if(!precioValido && !cantidadValida) {
+			while(!precioValido || !cantidadValida) { // Comprueba que tanto el precio como la cantidad sean válidos
+				if(!precioValido && !cantidadValida) { // Si ambos son inválidos
 					System.out.println("\nIngrese el precio del articulo");
 					precio = sc.nextDouble();
 					
 					System.out.println("\nIngrese la cantidad de articulos");
 					cantidad = sc.nextInt();
 					
-				} else if (!precioValido && cantidadValida) {
+				} else if (!precioValido && cantidadValida) { // Si solo el precio es inválido
 					System.out.println("\nIngrese el precio del articulo");
 					precio = sc.nextDouble();
-				} else if(precioValido && !cantidadValida) {
+				} else if(precioValido && !cantidadValida) { // Si solo la cantidad es inválida
 					System.out.println("\nIngrese la cantidad de articulos");
 					cantidad = sc.nextInt();
 				}
 				
+				// Comprueba si lo introducido es válido, que tanto el precio como la cantidad no sean negativos o iguales a 0
 				if (precio > 0 && cantidad <= 0) {
 					System.out.println("    ⚠ La cantidad ingresada no es válida, inténtelo nuevamente");
 					precioValido = true;
@@ -257,7 +259,7 @@ public class Tienda {
 			String fila = String.format("INSERT INTO productos (nombre, descripcion, categoria_id, subcategoria_id, precio, cantidad) VALUES ('%s', '%s', '%d', %s, '%f', '%d')",
 					nombre, descripcion, categoria, (subcategoria == 0 ? "NULL" : subcategoria), precio, cantidad); // Si la subcategoria es 0, es decir, no tiene subcategoría, inserta un null
 
-			int confirmar = s.executeUpdate(fila); // Es para confirmar que el producto se insertó correctamente en la tabla
+			int confirmar = s.executeUpdate(fila); // Es para confirmar que el producto se insertó correctamente en la tabla y mostrar el mensaje de confirmación
 
 			if (confirmar > 0) {
 			    System.out.println("¡Producto agregado correctamente!");
