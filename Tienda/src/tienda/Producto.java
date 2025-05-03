@@ -18,8 +18,7 @@ public class Producto {
 	public Producto() {
 	}
 
-	public Producto(int id, String nombre, String descripcion, int categoriaId, int subcategoriaId, double precio,
-			int cantidad) {
+	public Producto(int id, String nombre, String descripcion, int categoriaId, int subcategoriaId, double precio, int cantidad) {
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
@@ -95,34 +94,48 @@ public class Producto {
 			psCantidad.setInt(1, cantidad);
 			psCantidad.setInt(2, id);
 
-			int actualizados = psCantidad.executeUpdate();
-			if (actualizados > 0) {
+			int confirmar = psCantidad.executeUpdate(); // Devuelve la cantidad de filas afectadas por la consulta
+			if (confirmar > 0) { // Si afecta más de una es porque se ejecuto correctamente la consulta sql
 				System.out.println("Stock actualizado correctamente");
 			} else {
-				System.out.println("Error al actualizar el stock");
+				System.out.println("No se pudo actualizar el stock");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	// Es para la opción 2 del menú, donde se actualiza el stock de un producto existente
 	public static void actualizarStock(Connection c) {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Ingrese el ID del producto");
 		int productoId = sc.nextInt();
-		
-		System.out.println("¿Cuántos va a agregar?");
+
+		System.out.println("¿Cuántos productos quiere agregar?");
 		int cantidad = sc.nextInt();
-		
-		try {
-			String actualizarStock = "UPDATE productos SET cantidad = cantidad + ? WHERE id = ?";
-			PreparedStatement psActualizar = c.prepareStatement(actualizarStock);
-			psActualizar.setInt(1, cantidad);
-			psActualizar.setInt(2, productoId);
-			psActualizar.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+
+		if (cantidad > 0 && productoId > 0) { // Verifica que la cantidad y el id sean válidos
+			try {
+				String actualizarStock = "UPDATE productos SET cantidad = cantidad + ? WHERE id = ?";
+				PreparedStatement psActualizar = c.prepareStatement(actualizarStock);
+				psActualizar.setInt(1, cantidad);
+				psActualizar.setInt(2, productoId);
+				int confirmar = psActualizar.executeUpdate();
+
+				if (confirmar > 0) {
+					System.out.println("¡Stock actualizado correctamente!");
+				} else { // Si no se modifico ninguna fila, significa que los datos no son correctos
+					System.out.println("No se pudo actualizar el stock, asegurese de ingresar un id válido");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else if (productoId <= 0) { // Si el id es negativo
+			System.out.println("Ingrese un id válido");
+		} else {
+			System.out.println("No se pudo actualizar el stock, asegurese que los datos ingresados sean válidos");
 		}
+
 	}
 	
 	public void actualizarPrecio(Connection c) {
@@ -131,25 +144,25 @@ public class Producto {
         System.out.println("Ingrese el nuevo precio: ");
         double nuevoPrecio = sc.nextDouble();
         
-        if (nuevoPrecio > 0) { // Verificar que el nuevo precio sea válido
-        	try {
-    			String actualizar = "UPDATE productos SET precio = ? WHERE id = ?";
-    			PreparedStatement ps = c.prepareStatement(actualizar);
-    			ps.setDouble(1, nuevoPrecio);
-    			ps.setInt(2, id);
-    			
-    			 int confirmar = ps.executeUpdate();
-    		        if (confirmar > 0) {
-    		            System.out.println("Precio actualizado correctamente");
-    		        } else {
-    		            System.out.println("No se pudo actualizar el precio");
-    		        }
-    		} catch(SQLException e) {
-    			e.printStackTrace();
-    		}
-        } else {
-            System.out.println("Ingrese un precio válido");
-        }
+		if (nuevoPrecio > 0) { // Verifica que el nuevo precio sea válido
+			try {
+				String actualizar = "UPDATE productos SET precio = ? WHERE id = ?";
+				PreparedStatement ps = c.prepareStatement(actualizar);
+				ps.setDouble(1, nuevoPrecio);
+				ps.setInt(2, id);
+
+				int confirmar = ps.executeUpdate();
+				if (confirmar > 0) { // Si se afecta más de una fila, se ejcuto correctamente la consulta sql
+					System.out.println("¡Precio actualizado correctamente!");
+				} else {
+					System.out.println("No se pudo actualizar el precio");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else { // Si el precio es negativo
+			System.out.println("Ingrese un precio válido");
+		}
     }
 	
 	public void mostrarInfoDetallada(int opc) { 
@@ -173,5 +186,6 @@ public class Producto {
 		
 		System.out.println("  " + simbolo + "   ID: " + this.id);
         System.out.println("  " + simbolo + "     Nombre: " + this.nombre);
+        System.out.println("  " + simbolo + "     En stock: " + this.cantidad);
 	}
 }
