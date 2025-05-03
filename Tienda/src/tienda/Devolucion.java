@@ -30,13 +30,16 @@ public class Devolucion {
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery("SELECT * FROM devoluciones");
 			
+			System.out.println("  ┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑");
+			System.out.println("  │           DEVOLUCIONES");
 			while(rs.next()) {
-				System.out.println("   ID: " + rs.getInt("id"));
-				System.out.println("    Id de la venta: " + rs.getInt("producto_id"));
-				System.out.println("    Motivo: " + rs.getString("motivo"));
-				System.out.println("    Dinero devuelto: " + rs.getDouble("dinero_devuelto") + " €");
-				System.out.println();
+				System.out.println("  │   ID: " + rs.getInt("id"));
+				System.out.println("  │     Id de la venta: " + rs.getInt("producto_id"));
+				System.out.println("  │     Motivo: " + rs.getString("motivo"));
+				System.out.println("  │     Dinero devuelto: " + rs.getDouble("dinero_devuelto") + " €");
+				System.out.println("  │ ");
 			}
+			System.out.println("  ┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
