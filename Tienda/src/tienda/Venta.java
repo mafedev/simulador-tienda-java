@@ -133,15 +133,15 @@ public class Venta {
 			String obtenerId = "SELECT MAX(id) FROM ventas";
 			PreparedStatement ps = c.prepareStatement(obtenerId);
 			ResultSet rs = ps.executeQuery();
-			
-			if(rs.next()) {
+
+			if (rs.next()) {
 				id = rs.getInt(1); // Obtiene el id de la última venta para luego mostrarlo en el ticket
 			}
-			
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		// Se muestra la descripción de la compra
 		System.out.println("\n"
 				+ "      𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃𓂃 \r\n"
@@ -166,16 +166,16 @@ public class Venta {
 			PreparedStatement ps = c.prepareStatement(venta);
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
-			
-			if(rs.next()) {
+
+			if (rs.next()) {
 				System.out.println("  INFORMACIÓN DE LA VENTA");
 				System.out.println("     ID: " + rs.getInt("id"));
 				System.out.println("      Producto ID: " + rs.getInt("producto_id"));
 				System.out.println("      Categoria: " + rs.getInt("cantidad"));
 				System.out.println("      Total: " + rs.getDouble("total") + " €");
 			}
-			
-		}catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}

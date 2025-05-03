@@ -130,7 +130,7 @@ public class Producto {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		} else if (productoId <= 0) { // Si el id es negativo
+		} else if (productoId <= 0 && cantidad > 0) { // Si el id es negativo
 			System.out.println("Ingrese un id válido");
 		} else {
 			System.out.println("No se pudo actualizar el stock, asegurese que los datos ingresados sean válidos");
@@ -140,8 +140,9 @@ public class Producto {
 	
 	public void actualizarPrecio(Connection c) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("El precio actual del producto es: " + this.precio);
-        System.out.println("Ingrese el nuevo precio: ");
+        System.out.println("     Producto: " + this.nombre);
+        System.out.println("     El precio actual del producto es: " + this.precio + " €");
+        System.out.println("\nIngrese el nuevo precio: ");
         double nuevoPrecio = sc.nextDouble();
         
 		if (nuevoPrecio > 0) { // Verifica que el nuevo precio sea válido
@@ -155,13 +156,13 @@ public class Producto {
 				if (confirmar > 0) { // Si se afecta más de una fila, se ejcuto correctamente la consulta sql
 					System.out.println("¡Precio actualizado correctamente!");
 				} else {
-					System.out.println("No se pudo actualizar el precio");
+					System.out.println("    ⚠ No se pudo actualizar el precio");
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		} else { // Si el precio es negativo
-			System.out.println("Ingrese un precio válido");
+			System.out.println("    ⚠ Ingrese un precio válido");
 		}
     }
 	
