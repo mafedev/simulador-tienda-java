@@ -1,7 +1,6 @@
 package tienda;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,10 +87,10 @@ public class Venta {
 		}
 	}
 	
-	// Descuenta el dinero en la tabla de ventas en caso de que haya una devolución
-	public void descontarDevolucion(Connection c, int ventaId) {
+	// En caso de una devolución pone en true la columna devuelto, para que luego no puedan hacer más devoluciones, y para que no lo incluya en el total de dinero
+	public void actualizarColumnaDevuelto(Connection c, int ventaId) {
 		try {
-			String descontarDinero = "UPDATE ventas SET total = 0, devuelto = TRUE WHERE id = ?"; // Pone el dinero en 0
+			String descontarDinero = "UPDATE ventas SET devuelto = TRUE WHERE id = ?"; // Busca la venta por el id y pone en devuelto en true
 			PreparedStatement psDescontar = c.prepareStatement(descontarDinero);
 			psDescontar.setInt(1, ventaId);
 			psDescontar.executeUpdate();
@@ -162,19 +161,18 @@ public class Venta {
 	
 	public void mostrarInfoVentaId(Connection c, int id) {
 		try {
-			String venta = "SELECT * FROM ventas WHERE id = ?";
+			String venta = "SELECT * FROM ventas WHERE id = ?"; // Selecciona la venta con el id que se le pasa como parámetro
 			PreparedStatement ps = c.prepareStatement(venta);
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 
 			if (rs.next()) {
-				System.out.println("  INFORMACIÓN DE LA VENTA");
+				System.out.println("\n  INFORMACIÓN DE LA VENTA");
 				System.out.println("     ID: " + rs.getInt("id"));
 				System.out.println("      Producto ID: " + rs.getInt("producto_id"));
 				System.out.println("      Categoria: " + rs.getInt("cantidad"));
 				System.out.println("      Total: " + rs.getDouble("total") + " €");
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

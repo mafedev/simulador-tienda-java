@@ -271,12 +271,9 @@ public class Tienda {
 
 	public void devolverProducto() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Para realizar la devolución ingrese la siguiente información\n Ingrese el id de la compra, se encuentra en la parte superior del ticket");
+		System.out.println("Para realizar la devolución ingrese la siguiente información:\n 1. Ingrese el id de la compra, se encuentra en la parte superior del ticket");
 		int ventaId = sc.nextInt();
 		sc.nextLine();
-		
-		System.out.println(" Indique el motivo de la devolución:");
-		String motivo = sc.nextLine();
 
 		try {
 			// Verifica si la venta existe
@@ -291,35 +288,38 @@ public class Tienda {
 			psDevolucion.setInt(1, ventaId);
 			ResultSet rsDevolucion = psDevolucion.executeQuery();
 
-			if (rs.next() && !rsDevolucion.next()) { // Si la venta existe y no han hecho devoluciones, entonces hace la devolucón
-				int cantidadProductos = rs.getInt("cantidad");
-				int dineroDevuelto = rs.getInt("total");
-
-				// Obtiene el id del producto a devolver
-				String idProducto = "SELECT producto_id FROM ventas WHERE id = ?";
-				PreparedStatement ps = conexion.prepareStatement(idProducto);
-				ps.setInt(1, ventaId);
-				ResultSet rsId = ps.executeQuery();
-
-				int productoId = 0;
-				if (rsId.next()) {
-					productoId = rsId.getInt("producto_id");
-					// Llama el método de Venta, para que descuente el dinero devuelto de la tabla
-					Venta v = new Venta();
-					v.mostrarInfoVentaId(conexion, ventaId);
-					v.descontarDevolucion(conexion, ventaId);
+			if (rs.next()) { // Si la venta existe
+			    if (rsDevolucion.next()) { // Si ya hay una devolución registrada
+			        System.out.println(" ⚠ No se puede realizar la acción, ya hay una devolución registrada con este id");
+			    } else { // Si no hay una devolución
+					Venta v = new Venta(); // Crea una instancia de la clase para acceder a sus métodos 
+			        v.mostrarInfoVentaId(conexion, ventaId); // Muestra la información de la venta
 					
-					// Se inserta la devolución en la tabla devoluciones
-					Devolucion.registrarDevolucion(conexion, ventaId, productoId, motivo, dineroDevuelto);
-					System.out.println("Devolución registrada correctamente");
+					System.out.println("\n 2. Indique el motivo de la devolución:");
+					String motivo = sc.nextLine();
 
-				}
-			} else if (rsDevolucion.next()) { // Si ya hay una devolución
-				System.out.println("No se puede realizar la acción, ya hay una devolución registrada con este id");
+			        int cantidadProductos = rs.getInt("cantidad");
+			        int dineroDevuelto = rs.getInt("total");
+
+			        // Obtiene el id del producto a devolver
+			        String idProducto = "SELECT producto_id FROM ventas WHERE id = ?";
+			        PreparedStatement ps = conexion.prepareStatement(idProducto);
+			        ps.setInt(1, ventaId);
+			        ResultSet rsId = ps.executeQuery();
+
+			        int productoId = 0;
+			        if (rsId.next()) {
+			            productoId = rsId.getInt("producto_id");
+			            v.actualizarColumnaDevuelto(conexion, ventaId); // Llama el método para modificar la columna devuelto en ventas
+
+			            // Se inserta la devolución en la tabla devoluciones
+			            Devolucion.registrarDevolucion(conexion, ventaId, productoId, motivo, dineroDevuelto);
+			            System.out.println("\n¡Devolución registrada correctamente!");
+			        }
+			    }
 			} else {
-				System.out.println("No se encontró una venta con esos datos");
+			    System.out.println("No se encontró una venta con esos datos");
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
