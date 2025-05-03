@@ -381,8 +381,10 @@ public class Tienda {
 		for (Producto p : productos) {
 			if (p.getId() == id) {
 				p.actualizarPrecio(conexion);
+				return; // Si encuentra el producto, sale del método
 			}
 		}
         
+		System.out.println("Producto no encontrado"); // Si no encuentra el produco muestra el mensaje
     }
 }
