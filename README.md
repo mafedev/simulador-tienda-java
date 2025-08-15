@@ -34,7 +34,7 @@ Antes de ejecutar el programa, asegúrate de tener instalado:
 
 ## Estructura de la base de datos
 
-La base de datos contiene las siguientes tablas (ver [`tienda.sql`](tienda.sql)):
+La base de datos contiene las siguientes tablas (ver [`tablas.ipynb`](tablas.ipynb)):
 
 - **categorias**
 - **subcategorias**
@@ -58,10 +58,3 @@ Puedes adaptar o extender las tablas según las necesidades del proyecto.
 3. Compila y ejecuta el programa:
 
 Usa el menú en la terminal para interactuar con la tienda.
-
-## Funcionalidades principales
-- Menú interactivo por consola
-- Gestión de stock y precios
-- Registro de compras y devoluciones
-- Conexión persistente a base de datos
-- Búsqueda avanzada de productos
