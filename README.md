@@ -26,6 +26,7 @@ Todos los datos se gestionan en tiempo real desde una base de datos MySQL.
 
 ## Requisitos
 
+>[!IMPORTANT]
 Antes de ejecutar el programa, asegúrate de tener instalado:
 
 - Java JDK
@@ -50,11 +51,9 @@ Puedes adaptar o extender las tablas según las necesidades del proyecto.
 2. Configura los parámetros de conexión en [`Main.java`](Tienda/src/tienda/Main.java):
 
    ````java
-   // ...existing code...
    Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/tienda", "root", "root");
-   // ...existing code...
    ````
    
 3. Compila y ejecuta el programa:
 
-Usa el menú en la terminal para interactuar con la tienda.
+4. Usa el menú en la terminal para interactuar con la tienda.
